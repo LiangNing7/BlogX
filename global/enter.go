@@ -1,5 +1,11 @@
 package global
 
-import "github.com/LiangNing7/BlogX/conf"
+import (
+	"github.com/LiangNing7/BlogX/conf"
+	"gorm.io/gorm"
+)
 
-var Config *conf.Config
+var (
+	Config *conf.Config
+	DB     *gorm.DB
+)

@@ -5,3 +5,19 @@ system:
 log:
   app: blogx_server
   dir: logs
+db:
+  user: root
+  password: liangningMySql123
+  host: 127.0.0.1
+  port: 3306
+  db: blogx
+  debug: false
+  source: mysql
+db1:
+  user: root
+  password: liangningMySql123
+  host: 127.0.0.1
+  port: 3306
+  db: blogx
+  debug: false
+  source: mysql
