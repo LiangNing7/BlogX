@@ -1,12 +1,8 @@
 package middleware
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-
+	"github.com/LiangNing7/BlogX/service/log_service"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 // ResponseWriter 自定义的 ResponseWriter，Body用来捕获响应数据
@@ -24,19 +20,17 @@ func (w *ResponseWriter) Write(data []byte) (int, error) {
 func LogMiddleware(c *gin.Context) {
 	// 请求中间件
 	// 读原始 body
-	byteData, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		logrus.Errorf(err.Error())
-	}
-	fmt.Println("body: ", string(byteData))
+	log := log_service.NewActionLogByGin(c)
+	log.SetRequest(c)
+	// 绑定 log
+	c.Set("log", log)
 
-	// 将读取到的请求体重新赋值给 c.Request.Body
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(byteData))
 	res := &ResponseWriter{
 		ResponseWriter: c.Writer,
 	}
 	c.Writer = res
 	c.Next()
 	// 响应中间件
-	fmt.Println("response: ", string(res.Body))
+	log.SetResponse(res.Body)
+	log.Save()
 }

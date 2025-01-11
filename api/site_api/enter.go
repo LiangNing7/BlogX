@@ -22,7 +22,7 @@ type SiteUpdateRequest struct {
 }
 
 func (SiteApi) SiteUpdateView(c *gin.Context) {
-	log := log_service.NewActionLogByGin(c)
+	log := log_service.GetLog(c)
 
 	// 通过绑定获取一次
 	var cr SiteUpdateRequest
