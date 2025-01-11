@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	core.InitIPDB()
-	fmt.Println(core.GetIpAddr("175.0.201.207"))
-	fmt.Println(core.GetIpAddr("27.189.17.220"))
+	// core.InitIPDB()
+	fmt.Println(core.GetIpAddr("178.215.238.123"))
+	fmt.Println(core.GetIpAddr("27.20.195.90"))
 	fmt.Println(core.GetIpAddr("223.104.194.176"))
 	fmt.Println(core.GetIpAddr("59.125.68.207"))
 	fmt.Println(core.GetIpAddr("115.54.61.158"))
