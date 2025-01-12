@@ -3,6 +3,7 @@ package log_api
 import (
 	"github.com/LiangNing7/BlogX/common"
 	"github.com/LiangNing7/BlogX/common/res"
+	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,6 @@ func (LogApi) LogListView(c *gin.Context) {
 		PageInfo:     cr.PageInfo,
 		Likes:        []string{"title"},
 		Preloads:     []string{"UserModel"},
-		Debug:        true,
 		DefaultOrder: "created_at desc",
 	})
 
@@ -63,4 +63,23 @@ func (LogApi) LogListView(c *gin.Context) {
 	res.OkWithList(_list, int(count), c)
 	return
 
+}
+
+func (LogApi) LogReadView(c *gin.Context) {
+	var cr models.IDRequest
+	err := c.ShouldBindUri(&cr)
+	if err != nil {
+		res.FailWithError(err, c)
+		return
+	}
+	var log models.LogModel
+	err = global.DB.Take(&log, cr.ID).Error
+	if err != nil {
+		res.FailWithMsg("不存在的日志", c)
+		return
+	}
+	if !log.IsRead {
+		global.DB.Model(&log).Update("is_read", true)
+	}
+	res.OkWithMsg("日志读取成功", c)
 }
