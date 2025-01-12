@@ -1,6 +1,7 @@
 package site_api
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/LiangNing7/BlogX/models/enum"
@@ -43,6 +44,10 @@ func (SiteApi) SiteUpdateView(c *gin.Context) {
 	log.SetItemInfo("切片", []string{"a", "b"})
 	log.SetItemInfo("字符串", "你好")
 	log.SetItemInfo("数字", 123)
-	c.JSON(200, gin.H{"code": 0, "msg": "站点信息"})
+	id := log.Save()
+	fmt.Println(1, id)
+	id = log.Save()
+	fmt.Println(2, id)
+	c.JSON(200, gin.H{"code": 0, "msg": "站点信息", "data": 1})
 	return
 }

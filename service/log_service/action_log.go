@@ -31,6 +31,7 @@ type ActionLog struct {
 	showResponseHeader bool
 	itemList           []string
 	responseHeader     http.Header
+	isMiddleware       bool
 }
 
 func (ac *ActionLog) ShowRequest() {
@@ -107,13 +108,38 @@ func (ac *ActionLog) SetResponse(data []byte) {
 func (ac *ActionLog) SetResponseHeader(header http.Header) {
 	ac.responseHeader = header
 }
-func (ac *ActionLog) Save() {
+
+func (ac *ActionLog) MiddlewareSave() {
+	if ac.log == nil {
+		// 创建
+		ac.isMiddleware = true
+		ac.Save()
+		return
+	}
+	// 更新
+	// 响应头
+	if ac.showResponseHeader {
+		byteData, _ := json.Marshal(ac.responseHeader)
+		ac.itemList = append(ac.itemList, fmt.Sprintf("<div class=\"log_response_header\"><pre class=\"log_json_body\">%s</pre></div>", string(byteData)))
+	}
+	// 设置响应
+	if ac.showResponse {
+		ac.itemList = append(ac.itemList, fmt.Sprintf("<div class=\"log_response\"><pre class=\"log_json_body\">%s</pre></div>", string(ac.responseBody)))
+	}
+	ac.Save()
+}
+
+func (ac *ActionLog) Save() (id uint) {
 	if ac.log != nil {
+		newContent := strings.Join(ac.itemList, "\n")
+		content := ac.log.Content + "\n" + newContent
+
 		// 之前已经save过了，那就是更新
 		global.DB.Model(ac.log).Updates(map[string]any{
-			"title": "更新",
+			"content": content,
 		})
-		return
+		ac.itemList = []string{}
+		return ac.log.ID
 	}
 	var newItemList []string
 	// 请求头
@@ -132,15 +158,19 @@ func (ac *ActionLog) Save() {
 	}
 	// 中间的一些content
 	newItemList = append(newItemList, ac.itemList...)
-	// 响应头
-	if ac.showResponseHeader {
-		byteData, _ := json.Marshal(ac.responseHeader)
-		newItemList = append(newItemList, fmt.Sprintf("<div class=\"log_response_header\"><pre class=\"log_json_body\">%s</pre></div>", string(byteData)))
+
+	if ac.isMiddleware {
+		// 响应头
+		if ac.showResponseHeader {
+			byteData, _ := json.Marshal(ac.responseHeader)
+			newItemList = append(newItemList, fmt.Sprintf("<div class=\"log_response_header\"><pre class=\"log_json_body\">%s</pre></div>", string(byteData)))
+		}
+		// 设置响应
+		if ac.showResponse {
+			newItemList = append(newItemList, fmt.Sprintf("<div class=\"log_response\"><pre class=\"log_json_body\">%s</pre></div>", string(ac.responseBody)))
+		}
 	}
-	// 设置响应
-	if ac.showResponse {
-		newItemList = append(newItemList, fmt.Sprintf("<div class=\"log_response\"><pre class=\"log_json_body\">%s</pre></div>", string(ac.responseBody)))
-	}
+
 	ip := ac.c.ClientIP()
 	addr := core.GetIpAddr(ip)
 	userID := uint(1)
@@ -159,6 +189,8 @@ func (ac *ActionLog) Save() {
 		return
 	}
 	ac.log = &log
+	ac.itemList = []string{}
+	return log.ID
 }
 func NewActionLogByGin(c *gin.Context) *ActionLog {
 	return &ActionLog{
