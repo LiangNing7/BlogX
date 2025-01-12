@@ -2,6 +2,7 @@ system:
   ip:
   port: 8080
   env: dev
+  gin_mode: debug
 log:
   app: blogx_server
   dir: logs
