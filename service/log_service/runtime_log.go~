@@ -46,8 +46,6 @@ func (ac *RuntimeLog) Save() {
 		ac.itemList = []string{}
 		return
 	}
-
-	// 创建
 	err := global.DB.Create(&models.LogModel{
 		LogType:     enum.RuntimeLogType,
 		Title:       ac.title,

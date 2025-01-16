@@ -24,6 +24,7 @@ func LogMiddleware(c *gin.Context) {
 	log := log_service.NewActionLogByGin(c)
 	// 请求中间件
 	log.SetRequest(c)
+
 	c.Set("log", log)
 	res := &ResponseWriter{
 		ResponseWriter: c.Writer,

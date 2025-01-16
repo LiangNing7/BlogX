@@ -17,6 +17,6 @@ func main() {
 	log := log_service.NewRuntimeLog("同步文章数据", log_service.RuntimeDateHour)
 	log.SetItem("文章1", 11)
 	log.Save()
-	log.SetItem("文章2", 12)
-	log.Save()
+	// log.SetItem("文章2", 12)
+	// log.Save()
 }

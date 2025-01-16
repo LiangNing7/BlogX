@@ -102,6 +102,7 @@ func (LogApi) LogRemoveView(c *gin.Context) {
 	if len(logList) > 0 {
 		global.DB.Delete(&logList)
 	}
+	log.Save()
 	msg := fmt.Sprintf("日志删除成功，共删除%d条", len(logList))
 	res.OkWithMsg(msg, c)
 }

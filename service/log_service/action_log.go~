@@ -180,7 +180,7 @@ func (ac *ActionLog) Save() (id uint) {
 
 	ip := ac.c.ClientIP()
 	addr := core.GetIpAddr(ip)
-	claims, err := jwts.ParseTokenByGin(ac.c)
+	claims,err := jwts.ParseTokenByGin(ac.c)
 	userID := uint(0)
 	if err == nil && claims != nil {
 		userID = claims.UserID

@@ -2,6 +2,7 @@ package site_api
 
 import (
 	"github.com/LiangNing7/BlogX/common/res"
+	"github.com/LiangNing7/BlogX/service/log_service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,10 @@ func (SiteApi) SiteUpdateView(c *gin.Context) {
 		res.FailWithError(err, c)
 		return
 	}
+	log := log_service.NewActionLogByGin(c)
+	log.SetItem("name", cr.Name)
+	log.ShowResponseHeader()
+	log.ShowResponse()
 
 	res.OkWithMsg("更新成功", c)
 	return
