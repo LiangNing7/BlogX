@@ -1,5 +1,5 @@
 .idea
-local_settings.yaml
+settings_dev.yaml
 tmp
 main
 logs/*

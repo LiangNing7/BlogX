@@ -81,14 +81,15 @@ qq:
   appKey: ""
   redirect: http://xxxxx
 qiNiu:
-  enable: false
-  accessKey: ""
-  secretKey: ""
-  bucket: ""
-  uri: ""
-  region: ""
-  prefix: ""
-  size: 0
+  enable: true
+  accessKey: xsjtIqP8FGl1ylOEj5BqnvOdRMc6nrL4jIl0DK5D
+  secretKey: 
+  bucket: liangningblog
+  uri: http://sqa480fov.sabkt.gdipper.com
+  region: as0
+  prefix: blogx
+  size: 3
+  expire: 60
 ai:
   enable: false
   secretKey: njdfnhj6344t45347gsdhgsdh

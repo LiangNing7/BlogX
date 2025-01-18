@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>客户端上传文件到七牛云</title>
+</head>
+<body>
+<form>
+    <input id="uploader" placeholder="上传文件" type="file">
+    <span onclick="upload()">上传</span>
+    <script src="qiniu.min.js"></script>
+</form>
+<script>
+    function upload() {
+        const uploader = document.getElementById("uploader")
+        const file = uploader.files[0]
+        const token = "xsjtIqP8FGl1ylOEj5BqnvOdRMc6nrL4jIl0DK5D:a1Zt3P0tXBCHVZD_GSnAlQ0G9B4=:eyJkZWFkbGluZSI6MTczNzIwMzkxOCwic2NvcGUiOiJsaWFuZ25pbmdibG9nIn0="
+        const observer = {
+            next(res) {
+                // ...
+                console.log("next:", res)
+            },
+            error(err) {
+                // ...
+                console.log("error:", err)
+            },
+            complete(res) {
+                // ...
+                console.log("complete:", res)
+            }
+        }
+        const config = {
+            useCdnDomain: true,
+            region: qiniu.region.as0
+        }
+        const putExtra = {
+        }
+        const observable = qiniu.upload(file, "blogx/client/xx1.png", token, putExtra, config)
+        const subscription = observable.subscribe(observer) // 上传开始
+        console.log(subscription)
+    }
+</script>
+</body>
+</html>
