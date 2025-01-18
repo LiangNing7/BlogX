@@ -17,6 +17,7 @@ func Run() {
 	SiteRouter(nr)
 	LogRouter(nr)
 	ImageRouter(nr)
+	BannerRouter(nr)
 	addr := global.Config.System.Addr()
 	r.Run(addr)
 }
