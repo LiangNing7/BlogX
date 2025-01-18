@@ -1,13 +1,15 @@
 package api
 
 import (
+	"github.com/LiangNing7/BlogX/api/image_api"
 	"github.com/LiangNing7/BlogX/api/log_api"
 	"github.com/LiangNing7/BlogX/api/site_api"
 )
 
 type Api struct {
-	SiteApi site_api.SiteApi
-	LogApi  log_api.LogApi
+	SiteApi  site_api.SiteApi
+	LogApi   log_api.LogApi
+	ImageApi image_api.ImageApi
 }
 
 var App = Api{}

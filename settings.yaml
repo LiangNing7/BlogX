@@ -1,11 +1,19 @@
 system:
   ip: ""
   port: 8080
-  gin_mode: debug
   env: dev
+  gin_mode: debug
 log:
   app: blogx_server
   dir: logs
+jwt:
+  expire: 3
+  secret: xxx
+  issuer: liangning
+redis:
+  addr: 127.0.0.1:6379
+  password: ""
+  db: 2
 db:
   user: root
   password: liangningMySql123
@@ -22,17 +30,18 @@ db1:
   db: blogx
   debug: false
   source: mysql
-jwt:
-  expire: 3
-  secret: xxx
-  issuer: liangning
-redis:
-  addr: 127.0.0.1:6379
-  password: ""
-  db: 2
+upload:
+  size: 3
+  whiteList:
+    - jpg
+    - jpeg
+    - png
+    - webp
+    - gif
+  uploadDir: images001
 site:
   siteInfo:
-    title: 凉柠的博客
+    title: 凉柠博客
     logo: ""
     beian: ""
     mode: 1
@@ -45,7 +54,7 @@ site:
     description: ""
   about:
     siteDate: ""
-    qq: "1075090027"
+    qq: ""
     wechat: ""
     gitee: ""
     bilibili: ""
@@ -68,9 +77,9 @@ email:
   ssl: false
   tls: false
 qq:
-  appID: "1075090027"
+  appID: "747573454"
   appKey: ""
-  redirect: http://xxxxxx
+  redirect: http://xxxxx
 qiNiu:
   enable: false
   accessKey: ""

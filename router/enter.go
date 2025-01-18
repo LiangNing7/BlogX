@@ -11,11 +11,12 @@ func Run() {
 	r := gin.Default()
 
 	// 配置静态文件路径
-	r.Static("/upload", "upload")
+	r.Static("/uploads", "uploads")
 	nr := r.Group("/api")
 	nr.Use(middleware.LogMiddleware)
 	SiteRouter(nr)
 	LogRouter(nr)
+	ImageRouter(nr)
 	addr := global.Config.System.Addr()
 	r.Run(addr)
 }
