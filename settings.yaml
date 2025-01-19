@@ -63,18 +63,18 @@ site:
     qqLogin: false
     usernamePwdLogin: false
     emailLogin: false
-    captcha: false
+    captcha: true
   indexRight:
     list: []
   article:
     noExamine: true
 email:
-  domain: ""
-  port: 0
-  sendEmail: ""
-  authCode: ""
-  sendNickname: ""
-  ssl: false
+  domain: smtp.qq.com
+  port: 587
+  sendEmail: 1075090027@qq.com
+  authCode: 
+  sendNickname: LiangNing
+  ssl: true
   tls: false
 qq:
   appID: "747573454"
@@ -83,7 +83,7 @@ qq:
 qiNiu:
   enable: true
   accessKey: xsjtIqP8FGl1ylOEj5BqnvOdRMc6nrL4jIl0DK5D
-  secretKey: 
+  secretKey:
   bucket: liangningblog
   uri: http://sqa480fov.sabkt.gdipper.com
   region: as0

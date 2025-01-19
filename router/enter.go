@@ -18,6 +18,8 @@ func Run() {
 	LogRouter(nr)
 	ImageRouter(nr)
 	BannerRouter(nr)
+	CaptchaRouter(nr)
+	UserRouter(nr)
 	addr := global.Config.System.Addr()
 	r.Run(addr)
 }
