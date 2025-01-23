@@ -61,8 +61,8 @@ site:
     github: ""
   login:
     qqLogin: false
-    usernamePwdLogin: false
-    emailLogin: false
+    usernamePwdLogin: true
+    emailLogin: true
     captcha: true
   indexRight:
     list: []
@@ -72,7 +72,7 @@ email:
   domain: smtp.qq.com
   port: 587
   sendEmail: 1075090027@qq.com
-  authCode: 
+  authCode:
   sendNickname: LiangNing
   ssl: true
   tls: false
@@ -83,7 +83,7 @@ qq:
 qiNiu:
   enable: true
   accessKey: xsjtIqP8FGl1ylOEj5BqnvOdRMc6nrL4jIl0DK5D
-  secretKey:
+  secretKey: 
   bucket: liangningblog
   uri: http://sqa480fov.sabkt.gdipper.com
   region: as0

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/LiangNing7/BlogX/global"
+	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,11 @@ type Claims struct {
 type MyClaims struct {
 	Claims
 	jwt.StandardClaims
+}
+
+func (m MyClaims) GetUser() (user models.UserModel, err error) {
+	err = global.DB.Take(&user, m.UserID).Error
+	return
 }
 
 // GetToken 获取 token
@@ -66,4 +72,16 @@ func ParseTokenByGin(c *gin.Context) (*MyClaims, error) {
 		token = c.Query("token")
 	}
 	return ParseToken(token)
+}
+
+func GetClaims(c *gin.Context) (claims *MyClaims) {
+	_claims, ok := c.Get("claims")
+	if !ok {
+		return
+	}
+	claims, ok = _claims.(*MyClaims)
+	if !ok {
+		return
+	}
+	return
 }

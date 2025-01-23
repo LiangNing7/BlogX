@@ -7,6 +7,7 @@ import (
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/user_service"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/LiangNing7/BlogX/utils/pwd"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,10 @@ func (UserApi) RegisterEmailView(c *gin.Context) {
 		res.FailWithError(err, c)
 		return
 	}
-
+	if !global.Config.Site.Login.EmailLogin {
+		res.FailWithMsg("站点未启用邮箱注册", c)
+		return
+	}
 	// 创建用户
 	uname := base64Captcha.RandText(5, "0123456789")
 
@@ -61,6 +65,6 @@ func (UserApi) RegisterEmailView(c *gin.Context) {
 		res.FailWithMsg("邮箱登录失败", c)
 		return
 	}
-
+	user_service.NewUserService(user).UserLogin(c)
 	res.OkWithData(token, c)
 }
