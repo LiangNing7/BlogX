@@ -12,8 +12,8 @@ import (
 
 func InitDB() *gorm.DB {
 
-	dc := global.Config.DB  // 读库
-	dc1 := global.Config.DB // 写库
+	dc := global.Config.DB   // 读库
+	dc1 := global.Config.DB1 // 写库
 
 	db, err := gorm.Open(mysql.Open(dc.DSN()), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true, // 不生成外键约束

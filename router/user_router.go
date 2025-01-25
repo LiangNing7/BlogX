@@ -12,7 +12,7 @@ func UserRouter(r *gin.RouterGroup) {
 	r.POST("user/send_email", middleware.CaptchaMiddleware, app.SendEmailView)
 	r.POST("user/email", middleware.EmailVerifyMiddleware, app.RegisterEmailView)
 	r.POST("user/qq", app.QQLoginView)
-	r.POST("user/login", middleware.CaptchaMiddleware, middleware.BindJsonMiddleware[user_api.PwdLoginRequest], ,app.PwdLoginApi)
+	r.POST("user/login", middleware.CaptchaMiddleware, middleware.BindJsonMiddleware[user_api.PwdLoginRequest], app.PwdLoginApi)
 	r.GET("user/detail", middleware.AuthMiddleware, app.UserDetailView)
 	r.GET("user/login", middleware.AuthMiddleware, app.UserLoginListView)
 	r.GET("user/base", app.UserBaseInfoView)

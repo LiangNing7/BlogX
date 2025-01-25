@@ -1,5 +1,6 @@
 .idea
 settings_dev.yaml
+init/deploy_dev
 tmp
 main
 logs/*

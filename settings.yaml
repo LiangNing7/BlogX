@@ -30,6 +30,10 @@ db1:
   db: blogx
   debug: false
   source: mysql
+es:
+  url: http://127.0.0.1:9200
+  username:
+  password:
 upload:
   size: 3
   whiteList:
