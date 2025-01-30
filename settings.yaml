@@ -15,21 +15,20 @@ redis:
   password: ""
   db: 2
 db:
-  user: root
-  password: liangningMySql123
-  host: 127.0.0.1
-  port: 3306
-  db: blogx
-  debug: false
-  source: mysql
-db1:
-  user: root
-  password: liangningMySql123
-  host: 127.0.0.1
-  port: 3306
-  db: blogx
-  debug: false
-  source: mysql
+  - user: root
+    password: liangningMySql123
+    host: 127.0.0.1
+    port: 3306
+    db: blogx
+    debug: false
+    source: mysql
+  - user: root
+    password: liangningMySql123
+    host: 127.0.0.1
+    port: 3306
+    db: blogx
+    debug: false
+    source: mysql
 es:
   url: http://127.0.0.1:9200
   username:

@@ -20,3 +20,7 @@ func (d DB) DSN() string {
 func (d DB) Empty() bool {
 	return d.User == "" && d.Password == "" && d.Host == "" && d.Port == 0
 }
+
+func (d DB) Addr() string {
+	return fmt.Sprintf("%s:%d", d.Host, d.Port)
+}

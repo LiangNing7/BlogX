@@ -16,5 +16,6 @@ func main() {
 	global.Redis = core.InitRedis()
 	global.ESClient = core.EsConnect()
 	flags.Run()
+	core.InitMysqlES()
 	router.Run()
 }

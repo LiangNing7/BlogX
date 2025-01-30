@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/LiangNing7/BlogX/core"
 	"github.com/LiangNing7/BlogX/flags"
@@ -12,9 +13,14 @@ import (
 )
 
 func create() {
+	timeStr := "2025-01-31 00:17:11.000"
+	layout := "2006-01-02 15:04:05.000"
+	t, err := time.Parse(layout, timeStr)
 	var article = models.ArticleModel{
 		Model: models.Model{
-			ID: 1,
+			ID:        1,
+			CreatedAt: t,
+			UpdatedAt: t,
 		},
 		Title:   "LiangNing's Blog",
 		Content: "这是内容",
@@ -66,8 +72,8 @@ func main() {
 	global.Config = core.ReadConf()
 	core.InitLogrus()
 	global.ESClient = core.EsConnect()
-	// create()
+	create()
 	// list()
-	DocDelete()
+	// DocDelete()
 	// update()
 }
