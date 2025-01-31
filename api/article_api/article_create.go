@@ -1,8 +1,6 @@
 package article_api
 
 import (
-	"bytes"
-
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/middleware"
@@ -11,7 +9,7 @@ import (
 	"github.com/LiangNing7/BlogX/models/enum"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/LiangNing7/BlogX/utils/markdown"
-	"github.com/PuerkitoBio/goquery"
+	"github.com/LiangNing7/BlogX/utils/xss"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,11 +26,13 @@ type ArticleCreateRequest struct {
 
 func (ArticleApi) ArticleCreateView(c *gin.Context) {
 	cr := middleware.GetBind[ArticleCreateRequest](c)
+
 	user, err := jwts.GetClaims(c).GetUser()
 	if err != nil {
 		res.FailWithMsg("用户不存在", c)
 		return
 	}
+
 	// 判断分类id是不是自己创建的
 	var category models.CategoryModel
 	if cr.CategoryID != nil {
@@ -42,31 +42,18 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 			return
 		}
 	}
+
 	// 文章正文防xss注入
-	contentDoc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte(cr.Content)))
-	if err != nil {
-		res.FailWithMsg("正文解析错误", c)
-		return
-	}
-	contentDoc.Find("script").Remove()
-	contentDoc.Find("img").Remove()
-	contentDoc.Find("iframe").Remove()
-	cr.Content = contentDoc.Text()
+	cr.Content = xss.XSSFilter(cr.Content)
+
 	// 如果不传简介，那么从正文中取前30个字符
 	if cr.Abstract == "" {
-		// 把markdown转成html，再取文本
-		html := markdown.MdToHtml(cr.Content)
-		doc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte(html)))
-		if err != nil {
+		abs, err1 := markdown.ExtractContent(cr.Content, 100)
+		if err1 != nil {
 			res.FailWithMsg("正文解析错误", c)
 			return
 		}
-		htmlText := doc.Text()
-		cr.Abstract = htmlText
-		if len(htmlText) > 200 {
-			// 如果大于200，就取前200
-			cr.Abstract = string([]rune(htmlText)[:200])
-		}
+		cr.Abstract = abs
 	}
 	// 正文内容图片转存
 	// 1.图片过多，同步做，接口耗时高  异步做，
@@ -85,10 +72,12 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 	if cr.Status == enum.ArticleStatusExamine && global.Config.Site.Article.NoExamine {
 		article.Status = enum.ArticleStatusPublished
 	}
+
 	err = global.DB.Create(&article).Error
 	if err != nil {
 		res.FailWithMsg("文章创建失败", c)
 		return
 	}
+
 	res.OkWithMsg("文章创建成功", c)
 }

@@ -1,8 +1,6 @@
 package article_api
 
 import (
-	"bytes"
-
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/middleware"
@@ -11,7 +9,7 @@ import (
 	"github.com/LiangNing7/BlogX/models/enum"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/LiangNing7/BlogX/utils/markdown"
-	"github.com/PuerkitoBio/goquery"
+	"github.com/LiangNing7/BlogX/utils/xss"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,22 +26,26 @@ type ArticleUpdateRequest struct {
 
 func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 	cr := middleware.GetBind[ArticleUpdateRequest](c)
+
 	user, err := jwts.GetClaims(c).GetUser()
 	if err != nil {
 		res.FailWithMsg("用户不存在", c)
 		return
 	}
+
 	var article models.ArticleModel
 	err = global.DB.Take(&article, cr.ID).Error
 	if err != nil {
 		res.FailWithMsg("文章不存在", c)
 		return
 	}
+
 	// 更新的文章必须是自己的
 	if article.UserID != user.ID {
 		res.FailWithMsg("只能更新自己的文章", c)
 		return
 	}
+
 	// 判断分类id是不是自己创建的
 	var category models.CategoryModel
 	if cr.CategoryID != nil {
@@ -53,31 +55,18 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 			return
 		}
 	}
+
 	// 文章正文防xss注入
-	contentDoc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte(cr.Content)))
-	if err != nil {
-		res.FailWithMsg("正文解析错误", c)
-		return
-	}
-	contentDoc.Find("script").Remove()
-	contentDoc.Find("img").Remove()
-	contentDoc.Find("iframe").Remove()
-	cr.Content = contentDoc.Text()
+	cr.Content = xss.XSSFilter(cr.Content)
+
 	// 如果不传简介，那么从正文中取前30个字符
 	if cr.Abstract == "" {
-		// 把markdown转成html，再取文本
-		html := markdown.MdToHtml(cr.Content)
-		doc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte(html)))
-		if err != nil {
+		abs, err1 := markdown.ExtractContent(cr.Content, 100)
+		if err1 != nil {
 			res.FailWithMsg("正文解析错误", c)
 			return
 		}
-		htmlText := doc.Text()
-		cr.Abstract = htmlText
-		if len(htmlText) > 200 {
-			// 如果大于200，就取前200
-			cr.Abstract = string([]rune(htmlText)[:200])
-		}
+		cr.Abstract = abs
 	}
 	mps := map[string]any{
 		"title":        cr.Title,
@@ -92,10 +81,12 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 		// 如果是已发布的文章，进行编辑，那么就要改成待审核
 		mps["status"] = enum.ArticleStatusExamine
 	}
+
 	err = global.DB.Model(&article).Updates(mps).Error
 	if err != nil {
 		res.FailWithMsg("更新失败", c)
 		return
 	}
+
 	res.OkWithMsg("文章更新成功", c)
 }
