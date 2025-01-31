@@ -6,6 +6,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -65,6 +66,7 @@ func (ArticleApi) ArticleCollectView(c *gin.Context) {
 		}
 		res.OkWithMsg("收藏成功", c)
 		// 对收藏夹进行加1
+		redis_article.SetCacheCollect(cr.ArticleID, true)
 		global.DB.Model(&collectModel).Update("article_count", gorm.Expr("article_count + 1"))
 		return
 	}
@@ -79,7 +81,7 @@ func (ArticleApi) ArticleCollectView(c *gin.Context) {
 		return
 	}
 	res.OkWithMsg("取消收藏成功", c)
-	// TODO:收藏数同步缓存
+	redis_article.SetCacheCollect(cr.ArticleID, false)
 	global.DB.Model(&collectModel).Update("article_count", gorm.Expr("article_count - 1"))
 	return
 }

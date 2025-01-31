@@ -6,6 +6,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
@@ -32,12 +33,13 @@ func (ArticleApi) ArticleDiggView(c *gin.Context) {
 			res.FailWithMsg("点赞失败", c)
 			return
 		}
-		// TODO: 更新点赞数到缓存里面
+		redis_article.SetCacheDigg(cr.ID, true)
 		res.OkWithMsg("点赞成功", c)
 		return
 	}
 	// 取消点赞
 	global.DB.Model(models.ArticleDiggModel{}).Delete("user_id = ? and article_id = ?", claims.UserID, article.ID)
 	res.OkWithMsg("取消点赞成功", c)
+	redis_article.SetCacheDigg(cr.ID, false)
 	return
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
@@ -53,5 +54,6 @@ func (ArticleApi) ArticleLookView(c *gin.Context) {
 		res.FailWithMsg("失败", c)
 		return
 	}
+	redis_article.SetCacheLook(cr.ArticleID, true)
 	res.OkWithMsg("成功", c)
 }

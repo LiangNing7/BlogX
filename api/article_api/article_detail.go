@@ -6,6 +6,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
@@ -46,7 +47,14 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 			}
 		}
 	}
-	// TODO: 从缓存里面获取浏览量和点赞数
+	lookCount := redis_article.GetCacheLook(article.ID)
+	diggCount := redis_article.GetCacheDigg(article.ID)
+	collectCount := redis_article.GetCacheCollect(article.ID)
+
+	article.DiggCount = article.DiggCount + diggCount
+	article.CollectCount = article.CollectCount + collectCount
+	article.LookCount = article.LookCount + lookCount
+
 	res.OkWithData(ArticleDetailResponse{
 		ArticleModel: article,
 		Username:     article.UserModel.Username,

@@ -9,6 +9,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/LiangNing7/BlogX/utils/sql"
 	"github.com/gin-gonic/gin"
@@ -111,9 +112,15 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 	}, options)
 
 	var list = make([]ArticleListResponse, 0)
+	collectMap := redis_article.GetAllCacheCollect()
+	diggMap := redis_article.GetAllCacheDigg()
+	lookMap := redis_article.GetAllCacheLook()
 
 	for _, model := range _list {
 		model.Content = ""
+		model.DiggCount = model.DiggCount + diggMap[model.ID]
+		model.CollectCount = model.CollectCount + collectMap[model.ID]
+		model.LookCount = model.LookCount + lookMap[model.ID]
 		list = append(list, ArticleListResponse{
 			ArticleModel: model,
 			UserTop:      userTopMap[model.ID],
