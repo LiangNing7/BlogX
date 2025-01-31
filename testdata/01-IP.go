@@ -29,4 +29,5 @@ func main() {
 	fmt.Println(core.GetIpAddr("2231.104.194.176"))
 	fmt.Println(core.GetIpAddr(""))
 	fmt.Println(core.GetIpAddr("fe80::4464:1c7f:c207:6988%15"))
+	fmt.Println(core.GetIpAddr("220.196.160.117"))
 }

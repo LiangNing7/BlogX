@@ -20,6 +20,7 @@ func Run() {
 	BannerRouter(nr)
 	CaptchaRouter(nr)
 	UserRouter(nr)
+	ArticleRouter(nr)
 	addr := global.Config.System.Addr()
 	r.Run(addr)
 }
