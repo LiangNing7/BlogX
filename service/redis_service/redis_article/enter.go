@@ -82,6 +82,13 @@ func GetAllCacheCollect() (mps map[uint]int) {
 	return GetAll(articleCacheCollect)
 }
 
+func Clear() {
+	err := global.Redis.Del("article_look_key", "article_digg_key", "article_collect_key").Err()
+	if err != nil {
+		logrus.Error(err)
+	}
+}
+
 func SetUserArticleHistoryCache(articleID, userID uint) {
 	key := fmt.Sprintf("histroy_%d", userID)
 	field := fmt.Sprintf("%d", articleID)
