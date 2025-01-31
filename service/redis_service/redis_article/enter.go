@@ -3,7 +3,6 @@ package redis_article
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/utils/date"
@@ -27,6 +26,7 @@ func set(t articleCacheType, articleID uint, increase bool) {
 	}
 	global.Redis.HSet(string(t), strconv.Itoa(int(articleID)), num)
 }
+
 func SetCacheLook(articleID uint, increase bool) {
 	set(articleCacheLook, articleID, increase)
 }
@@ -50,6 +50,7 @@ func GetCacheDigg(articleID uint) int {
 func GetCacheCollect(articleID uint) int {
 	return get(articleCacheCollect, articleID)
 }
+
 func GetAll(t articleCacheType) (mps map[uint]int) {
 	res, err := global.Redis.HGetAll(string(t)).Result()
 	if err != nil {
@@ -67,8 +68,10 @@ func GetAll(t articleCacheType) (mps map[uint]int) {
 		}
 		mps[uint(iK)] = iN
 	}
+
 	return mps
 }
+
 func GetAllCacheLook() (mps map[uint]int) {
 	return GetAll(articleCacheLook)
 }
@@ -80,19 +83,25 @@ func GetAllCacheCollect() (mps map[uint]int) {
 }
 
 func SetUserArticleHistoryCache(articleID, userID uint) {
-	key := fmt.Sprintf("histroy_%d_%d", userID, articleID)
-	now := time.Now().Local()
+	key := fmt.Sprintf("histroy_%d", userID)
+	field := fmt.Sprintf("%d", articleID)
+
 	endTime := date.GetNowAfter()
-	subTime := endTime.Sub(now)
-	err := global.Redis.Set(key, "", subTime).Err()
+	err := global.Redis.HSet(key, field, "").Err()
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+	err = global.Redis.ExpireAt(key, endTime).Err()
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
 }
 func GetUserArticleHistoryCache(articleID, userID uint) (ok bool) {
-	key := fmt.Sprintf("histroy_%d_%d", userID, articleID)
-	err := global.Redis.Get(key).Err()
+	key := fmt.Sprintf("histroy_%d", userID)
+	field := fmt.Sprintf("%d", articleID)
+	err := global.Redis.HGet(key, field).Err()
 	if err != nil {
 		return false
 	}
