@@ -27,7 +27,11 @@ func ArticleRouter(r *gin.RouterGroup) {
 	r.DELETE("article/:id", middleware.AuthMiddleware, middleware.BindUriMiddleware[models.IDRequest], app.ArticleRemoveUserView)
 	r.DELETE("article", middleware.AdminMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.ArticleRemoveView)
 
-	r.POST("article/category", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.CategoryCreateRequest], app.CategoryCreateView)
-	r.GET("article/category", middleware.BindQueryMiddleware[article_api.CategoryListRequest], app.CategoryListView)
-	r.DELETE("article/category", middleware.AuthMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.CategoryRemoveView)
+	r.POST("category", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.CategoryCreateRequest], app.CategoryCreateView)
+	r.GET("category", middleware.BindQueryMiddleware[article_api.CategoryListRequest], app.CategoryListView)
+	r.DELETE("category", middleware.AuthMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.CategoryRemoveView)
+	
+	r.POST("collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.CollectCreateRequest], app.CollectCreateView)
+	r.GET("collect", middleware.BindQueryMiddleware[article_api.CollectListRequest], app.CollectListView)
+	r.DELETE("collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.CollectRemoveView)
 }
