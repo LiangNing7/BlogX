@@ -1,6 +1,8 @@
 package article_api
 
 import (
+	"fmt"
+
 	"github.com/LiangNing7/BlogX/common"
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
@@ -105,4 +107,24 @@ func (ArticleApi) CategoryListView(c *gin.Context) {
 		})
 	}
 	res.OkWithList(list, count, c)
+}
+
+func (ArticleApi) CategoryRemoveView(c *gin.Context) {
+	var cr = middleware.GetBind[models.RemoveRequest](c)
+	var list []models.CategoryModel
+	query := global.DB.Where("id in ?", cr.IDList)
+	claims := jwts.GetClaims(c)
+	if claims.Role != enum.AdminRole {
+		query.Where("user_id = ?", claims.UserID)
+	}
+	global.DB.Where(query).Find(&list)
+	if len(list) > 0 {
+		err := global.DB.Delete(&list).Error
+		if err != nil {
+			res.FailWithMsg("删除分类失败", c)
+			return
+		}
+	}
+	msg := fmt.Sprintf("删除分类成功 共删除%d条", len(list))
+	res.OkWithMsg(msg, c)
 }
