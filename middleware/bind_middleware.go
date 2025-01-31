@@ -27,6 +27,19 @@ func BindQueryMiddleware[T any](c *gin.Context) {
 	c.Set("request", cr)
 	return
 }
+
+func BindUriMiddleware[T any](c *gin.Context) {
+	var cr T
+	err := c.ShouldBindUri(&cr)
+	if err != nil {
+		res.FailWithError(err, c)
+		c.Abort()
+		return
+	}
+	c.Set("request", cr)
+	return
+}
+
 func GetBind[T any](c *gin.Context) (cr T) {
 	return c.MustGet("request").(T)
 }
