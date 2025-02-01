@@ -1,6 +1,8 @@
 package article_api
 
 import (
+	"fmt"
+
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/middleware"
@@ -84,4 +86,15 @@ func (ArticleApi) ArticleCollectView(c *gin.Context) {
 	redis_article.SetCacheCollect(cr.ArticleID, false)
 	global.DB.Model(&collectModel).Update("article_count", gorm.Expr("article_count - 1"))
 	return
+}
+
+func (ArticleApi) ArticleCollectPatchRemoveView(c *gin.Context) {
+	var cr = middleware.GetBind[models.RemoveRequest](c)
+	claims := jwts.GetClaims(c)
+	var userCollectList []models.UserArticleCollectModel
+	global.DB.Find(&userCollectList, "id in ? and user_id = ?", cr.IDList, claims.UserID)
+	if len(userCollectList) > 0 {
+		global.DB.Delete(&userCollectList)
+	}
+	res.OkWithMsg(fmt.Sprintf("批量移除文章%d篇", len(userCollectList)), c)
 }
