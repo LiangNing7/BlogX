@@ -38,5 +38,6 @@ type IndexRight struct {
 	List []ComponentInfo `json:"list" yaml:"list"`
 }
 type Article struct {
-	NoExamine bool `json:"noExamine" yaml:"noExamine"` // 免审核
+	NoExamine   bool `json:"noExamine" yaml:"noExamine"`     // 免审核
+	CommentLine int  `json:"commentLine" yaml:"commentLine"` // 评论的层级
 }

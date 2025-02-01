@@ -36,9 +36,14 @@ func (CommentApi) CommentCreateView(c *gin.Context) {
 	// 去找这个评论的根评论
 	if cr.ParentID != nil {
 		// 有父评论
-		r := comment_service.GetRootComment(*cr.ParentID)
-		if r != nil {
-			model.RootParentID = &r.ID
+		parentList := comment_service.GetParents(*cr.ParentID)
+		// 判断父评论的层级是否满足
+		if len(parentList)+1 > global.Config.Site.Article.CommentLine {
+			res.FailWithMsg("评论层级达到限制", c)
+			return
+		}
+		if len(parentList) > 0 {
+			model.RootParentID = &parentList[len(parentList)-1].ID
 		}
 	}
 	err = global.DB.Create(&model).Error
@@ -47,6 +52,6 @@ func (CommentApi) CommentCreateView(c *gin.Context) {
 		return
 	}
 	redis_article.SetCacheComment(cr.ArticleID, 1)
-	
+
 	res.OkWithMsg("发布评论成功", c)
 }
