@@ -4,6 +4,7 @@ import (
 	"github.com/LiangNing7/BlogX/api/article_api"
 	"github.com/LiangNing7/BlogX/api/banner_api"
 	"github.com/LiangNing7/BlogX/api/captcha_api"
+	"github.com/LiangNing7/BlogX/api/comment_api"
 	"github.com/LiangNing7/BlogX/api/image_api"
 	"github.com/LiangNing7/BlogX/api/log_api"
 	"github.com/LiangNing7/BlogX/api/site_api"
@@ -18,6 +19,7 @@ type Api struct {
 	CaptchaApi captcha_api.CaptchaApi
 	UserApi    user_api.UserApi
 	ArticleApi article_api.ArticleApi
+	CommentApi comment_api.CommentApi
 }
 
 var App = Api{}

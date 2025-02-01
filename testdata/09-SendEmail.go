@@ -11,5 +11,5 @@ func main() {
 	flags.Parse()
 	global.Config = core.ReadConf()
 	core.InitLogrus()
-	_ = email_service.SendRegisterCode("liangning2277@gmail.com", "5433")
+	_ = email_service.SendRegisterCode("liangning2277@gmail.comment_service", "5433")
 }

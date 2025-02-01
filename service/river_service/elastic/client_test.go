@@ -45,8 +45,8 @@ func (s *elasticTestSuite) TestSimple(c *C) {
 	index := "dummy"
 	docType := "blog"
 
-	//key1 := "name"
-	//key2 := "content"
+	// key1 := "name"
+	// key2 := "content"
 
 	err := s.c.Update(index, docType, "1", makeTestData("abc", "hello world"))
 	c.Assert(err, IsNil)
