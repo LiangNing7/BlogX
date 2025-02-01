@@ -9,6 +9,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_comment"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
@@ -70,7 +71,7 @@ func (CommentApi) CommentListView(c *gin.Context) {
 			ArticleID:    model.ArticleID,
 			ArticleTitle: model.ArticleModel.Title,
 			ArticleCover: model.ArticleModel.Cover,
-			DiggCount:    model.DiggCount,
+			DiggCount:    model.DiggCount + redis_comment.GetCacheDigg(model.ID),
 		})
 	}
 	res.OkWithList(list, count, c)
