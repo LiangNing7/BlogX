@@ -15,26 +15,38 @@ const (
 	articleCacheLook    articleCacheType = "article_look_key"
 	articleCacheDigg    articleCacheType = "article_digg_key"
 	articleCacheCollect articleCacheType = "article_collect_key"
+	articleCacheComment articleCacheType = "article_comment_key"
 )
 
-func set(t articleCacheType, articleID uint, increase bool) {
+func set(t articleCacheType, articleID uint, n int) {
 	num, _ := global.Redis.HGet(string(t), strconv.Itoa(int(articleID))).Int()
-	if !increase {
-		num--
-	} else {
-		num++
-	}
+	num += n
 	global.Redis.HSet(string(t), strconv.Itoa(int(articleID)), num)
 }
 
 func SetCacheLook(articleID uint, increase bool) {
-	set(articleCacheLook, articleID, increase)
+	var n = 1
+	if !increase {
+		n = -1
+	}
+	set(articleCacheLook, articleID, n)
 }
 func SetCacheDigg(articleID uint, increase bool) {
-	set(articleCacheDigg, articleID, increase)
+	var n = 1
+	if !increase {
+		n = -1
+	}
+	set(articleCacheDigg, articleID, n)
 }
 func SetCacheCollect(articleID uint, increase bool) {
-	set(articleCacheCollect, articleID, increase)
+	var n = 1
+	if !increase {
+		n = -1
+	}
+	set(articleCacheCollect, articleID, n)
+}
+func SetCacheComment(articleID uint, n int) {
+	set(articleCacheComment, articleID, n)
 }
 
 func get(t articleCacheType, articleID uint) int {
@@ -49,6 +61,9 @@ func GetCacheDigg(articleID uint) int {
 }
 func GetCacheCollect(articleID uint) int {
 	return get(articleCacheCollect, articleID)
+}
+func GetCacheComment(articleID uint) int {
+	return get(articleCacheComment, articleID)
 }
 
 func GetAll(t articleCacheType) (mps map[uint]int) {
@@ -80,6 +95,9 @@ func GetAllCacheDigg() (mps map[uint]int) {
 }
 func GetAllCacheCollect() (mps map[uint]int) {
 	return GetAll(articleCacheCollect)
+}
+func GetAllCacheComment() (mps map[uint]int) {
+	return GetAll(articleCacheComment)
 }
 
 func Clear() {
