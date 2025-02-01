@@ -73,10 +73,16 @@ type CommentResponse struct {
 }
 
 func GetCommentTreeV4(id uint) (res *CommentResponse) {
+	return getCommentTreeV4(id, 1)
+}
+
+func getCommentTreeV4(id uint, line int) (res *CommentResponse) {
 	model := &models.CommentModel{
 		Model: models.Model{ID: id},
 	}
+
 	global.DB.Preload("UserModel").Preload("SubCommentList").Take(model)
+
 	res = &CommentResponse{
 		ID:           model.ID,
 		CreatedAt:    model.CreatedAt,
@@ -90,8 +96,11 @@ func GetCommentTreeV4(id uint) (res *CommentResponse) {
 		ApplyCount:   0,
 		SubComments:  make([]*CommentResponse, 0),
 	}
+	if line >= global.Config.Site.Article.CommentLine {
+		return
+	}
 	for _, commentModel := range model.SubCommentList {
-		res.SubComments = append(res.SubComments, GetCommentTreeV4(commentModel.ID))
+		res.SubComments = append(res.SubComments, getCommentTreeV4(commentModel.ID, line+1))
 	}
 	return
 }

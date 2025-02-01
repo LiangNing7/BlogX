@@ -71,7 +71,7 @@ site:
     list: []
   article:
     noExamine: true
-    commentLine: 3
+    commentLine: 2
 email:
   domain: smtp.qq.com
   port: 587
