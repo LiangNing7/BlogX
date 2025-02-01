@@ -8,6 +8,7 @@ import (
 	"github.com/LiangNing7/BlogX/models/enum"
 	"github.com/LiangNing7/BlogX/service/comment_service"
 	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_comment"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
@@ -44,6 +45,9 @@ func (CommentApi) CommentCreateView(c *gin.Context) {
 		}
 		if len(parentList) > 0 {
 			model.RootParentID = &parentList[len(parentList)-1].ID
+			for _, commentModel := range parentList {
+				redis_comment.SetCacheApply(commentModel.ID, 1)
+			}
 		}
 	}
 	err = global.DB.Create(&model).Error

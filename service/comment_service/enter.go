@@ -5,6 +5,7 @@ import (
 
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/models"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_comment"
 )
 
 // GetRootComment 获取一个评论的根评论
@@ -93,7 +94,7 @@ func getCommentTreeV4(id uint, line int) (res *CommentResponse) {
 		ArticleID:    model.ArticleID,
 		ParentID:     model.ParentID,
 		DiggCount:    model.DiggCount,
-		ApplyCount:   0,
+		ApplyCount:   redis_comment.GetCacheApply(model.ID),
 		SubComments:  make([]*CommentResponse, 0),
 	}
 	if line >= global.Config.Site.Article.CommentLine {
