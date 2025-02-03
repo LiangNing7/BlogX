@@ -1,11 +1,14 @@
 package article_api
 
 import (
+	"fmt"
+
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/message_service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,6 +27,11 @@ func (ArticleApi) ArticleExamineView(c *gin.Context) {
 		return
 	}
 	global.DB.Model(&article).Update("status", cr.Status)
-	// TODO: 给文章的发布人发一个系统通知
+	switch cr.Status {
+	case 3: // 审核成功
+		message_service.InsertSystemMessage(article.UserID, "管理员审核了你的文章", "审核成功", article.Title, fmt.Sprintf("/article/%d", article.ID))
+	case 4: // 审核失败
+		message_service.InsertSystemMessage(article.UserID, "管理员审核了你的文章", fmt.Sprintf("审核失败 失败原因：%s", cr.Msg), "", "")
+	}
 	res.OkWithMsg("审核成功", c)
 }

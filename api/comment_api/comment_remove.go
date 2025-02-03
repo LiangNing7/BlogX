@@ -9,6 +9,7 @@ import (
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
 	"github.com/LiangNing7/BlogX/service/comment_service"
+	"github.com/LiangNing7/BlogX/service/message_service"
 	"github.com/LiangNing7/BlogX/service/redis_service/redis_comment"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
@@ -30,6 +31,9 @@ func (CommentApi) CommentRemoveApi(c *gin.Context) {
 			return
 		}
 	}
+
+	message_service.InsertSystemMessage(model.UserID, "管理员删除了你的评论", fmt.Sprintf("%s 内容不符合社区规范", model.Content), "", "")
+
 	// 找所有的子评论，还要找所有的父评论
 	subList := comment_service.GetCommentOneDimensional(model.ID)
 	if model.ParentID != nil {
