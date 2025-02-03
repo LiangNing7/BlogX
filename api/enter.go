@@ -8,6 +8,7 @@ import (
 	"github.com/LiangNing7/BlogX/api/image_api"
 	"github.com/LiangNing7/BlogX/api/log_api"
 	"github.com/LiangNing7/BlogX/api/site_api"
+	"github.com/LiangNing7/BlogX/api/site_msg_api"
 	"github.com/LiangNing7/BlogX/api/user_api"
 )
 
@@ -20,6 +21,7 @@ type Api struct {
 	UserApi    user_api.UserApi
 	ArticleApi article_api.ArticleApi
 	CommentApi comment_api.CommentApi
+	SiteMsgApi site_msg_api.SiteMsgApi
 }
 
 var App = Api{}
