@@ -28,7 +28,7 @@ func CalcUserRelationship(A, B uint) (t relationship_enum.Relation) {
 	}
 	focus := userFocusList[0]
 	if focus.FocusUserID == A {
-		return relationship_enum.RelationFocus
+		return relationship_enum.RelationFans
 	}
-	return relationship_enum.RelationFans
+	return relationship_enum.RelationFocus
 }
