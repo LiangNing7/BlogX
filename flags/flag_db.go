@@ -27,6 +27,7 @@ func FlagDB() {
 		&models.MessageModel{},                // 站内信表
 		&models.UserMessageConfModel{},        // 用户消息配置表
 		&models.UserGlobalNotificationModel{}, // 用户全局消息表
+		&models.UserFocusModel{},              // 好友关系表
 	)
 	if err != nil {
 		logrus.Errorf("数据库迁移失败 %s\n", err)
