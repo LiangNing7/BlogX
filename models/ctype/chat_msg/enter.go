@@ -4,7 +4,7 @@ type TextMsg struct {
 	Content string `json:"content"`
 }
 type ImageMsg struct {
-	Href string `json:"href"`
+	Src string `json:"src"`
 }
 type MarkdownMsg struct {
 	Content string `json:"content"`

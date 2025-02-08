@@ -4,6 +4,7 @@ import (
 	"github.com/LiangNing7/BlogX/api/article_api"
 	"github.com/LiangNing7/BlogX/api/banner_api"
 	"github.com/LiangNing7/BlogX/api/captcha_api"
+	"github.com/LiangNing7/BlogX/api/chat_api"
 	"github.com/LiangNing7/BlogX/api/comment_api"
 	"github.com/LiangNing7/BlogX/api/focus_api"
 	"github.com/LiangNing7/BlogX/api/global_notification_api"
@@ -26,6 +27,7 @@ type Api struct {
 	SiteMsgApi            site_msg_api.SiteMsgApi
 	GlobalNotificationApi global_notification_api.GlobalNotificationApi
 	FocusApi              focus_api.FocusApi
+	ChatApi               chat_api.ChatApi
 }
 
 var App = Api{}
