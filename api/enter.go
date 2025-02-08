@@ -5,6 +5,7 @@ import (
 	"github.com/LiangNing7/BlogX/api/banner_api"
 	"github.com/LiangNing7/BlogX/api/captcha_api"
 	"github.com/LiangNing7/BlogX/api/comment_api"
+	"github.com/LiangNing7/BlogX/api/focus_api"
 	"github.com/LiangNing7/BlogX/api/global_notification_api"
 	"github.com/LiangNing7/BlogX/api/image_api"
 	"github.com/LiangNing7/BlogX/api/log_api"
@@ -24,6 +25,7 @@ type Api struct {
 	CommentApi            comment_api.CommentApi
 	SiteMsgApi            site_msg_api.SiteMsgApi
 	GlobalNotificationApi global_notification_api.GlobalNotificationApi
+	FocusApi              focus_api.FocusApi
 }
 
 var App = Api{}
