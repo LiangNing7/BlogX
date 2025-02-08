@@ -59,6 +59,7 @@ func (FocusApi) FocusUserView(c *gin.Context) {
 type FocusUserListRequest struct {
 	common.PageInfo
 	FocusUserID uint `form:"focusUserID"`
+	UserID      uint `form:"userID"` // 查用户的关注
 }
 type FocusUserListResponse struct {
 	FocusUserID       uint      `json:"focusUserID"`
@@ -68,14 +69,30 @@ type FocusUserListResponse struct {
 	CreatedAt         time.Time `json:"createdAt"`
 }
 
+// FocusUserListView 我的关注和用户的关注
 func (FocusApi) FocusUserListView(c *gin.Context) {
 	cr := middleware.GetBind[FocusUserListRequest](c)
 
 	claims := jwts.GetClaims(c)
+	if cr.UserID != 0 {
+		// 传了用户id，我就查这个人关注的用户列表
+		var userConf models.UserConfModel
+		err := global.DB.Take(&userConf, "user_id = ?", cr.UserID).Error
+		if err != nil {
+			res.FailWithMsg("用户配置信息不存在", c)
+			return
+		}
+		if !userConf.OpenFollow {
+			res.FailWithMsg("此用户未公开我的关注", c)
+			return
+		}
+	} else {
+		cr.UserID = claims.UserID
+	}
 
 	_list, count, _ := common.ListQuery(models.UserFocusModel{
 		FocusUserID: cr.FocusUserID,
-		UserID:      claims.UserID,
+		UserID:      cr.UserID,
 	}, common.Options{
 		PageInfo: cr.PageInfo,
 		Preloads: []string{"FocusUserModel"},
