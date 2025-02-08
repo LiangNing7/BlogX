@@ -10,5 +10,6 @@ import (
 func FocusRouter(r *gin.RouterGroup) {
 	app := api.App.FocusApi
 	r.POST("focus", middleware.AuthMiddleware, middleware.BindJsonMiddleware[focus_api.FocusUserRequest], app.FocusUserView)
-	r.GET("focus/my_focus", middleware.AuthMiddleware, middleware.BindQueryMiddleware[focus_api.FocusUserListRequest], app.FocusUserListView)
+	r.GET("focus/my_focus", middleware.BindQueryMiddleware[focus_api.FocusUserListRequest], app.FocusUserListView)
+	r.GET("focus/my_fans", middleware.BindQueryMiddleware[focus_api.FocusUserListRequest], app.FansUserListView)
 }

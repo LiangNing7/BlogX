@@ -73,7 +73,6 @@ type FocusUserListResponse struct {
 func (FocusApi) FocusUserListView(c *gin.Context) {
 	cr := middleware.GetBind[FocusUserListRequest](c)
 
-	claims := jwts.GetClaims(c)
 	if cr.UserID != 0 {
 		// 传了用户id，我就查这个人关注的用户列表
 		var userConf models.UserConfModel
@@ -87,6 +86,11 @@ func (FocusApi) FocusUserListView(c *gin.Context) {
 			return
 		}
 	} else {
+		claims, err := jwts.ParseTokenByGin(c)
+		if err != nil || claims == nil {
+			res.FailWithMsg("请登录", c)
+			return
+		}
 		cr.UserID = claims.UserID
 	}
 
@@ -109,5 +113,56 @@ func (FocusApi) FocusUserListView(c *gin.Context) {
 		})
 	}
 
+	res.OkWithList(list, count, c)
+}
+
+type FansUserListResponse struct {
+	FansUserID       uint      `json:"fansUserID"`
+	FansUserNickname string    `json:"fansUserNickname"`
+	FansUserAvatar   string    `json:"fansUserAvatar"`
+	FansUserAbstract string    `json:"fansUserAbstract"`
+	CreatedAt        time.Time `json:"createdAt"`
+}
+
+// FansUserListView 我的粉丝和用户的粉丝
+func (FocusApi) FansUserListView(c *gin.Context) {
+	cr := middleware.GetBind[FocusUserListRequest](c)
+	if cr.UserID != 0 {
+		// 传了用户id，我就查这个人的粉丝列表
+		var userConf models.UserConfModel
+		err := global.DB.Take(&userConf, "user_id = ?", cr.UserID).Error
+		if err != nil {
+			res.FailWithMsg("用户配置信息不存在", c)
+			return
+		}
+		if !userConf.OpenFans {
+			res.FailWithMsg("此用户未公开我的粉丝", c)
+			return
+		}
+	} else {
+		claims, err := jwts.ParseTokenByGin(c)
+		if err != nil || claims == nil {
+			res.FailWithMsg("请登录", c)
+			return
+		}
+		cr.UserID = claims.UserID
+	}
+	_list, count, _ := common.ListQuery(models.UserFocusModel{
+		FocusUserID: cr.UserID,
+		UserID:      cr.FocusUserID,
+	}, common.Options{
+		PageInfo: cr.PageInfo,
+		Preloads: []string{"UserModel"},
+	})
+	var list = make([]FansUserListResponse, 0)
+	for _, model := range _list {
+		list = append(list, FansUserListResponse{
+			FansUserID:       model.UserID,
+			FansUserNickname: model.UserModel.Nickname,
+			FansUserAvatar:   model.UserModel.Avatar,
+			FansUserAbstract: model.UserModel.Abstract,
+			CreatedAt:        model.CreatedAt,
+		})
+	}
 	res.OkWithList(list, count, c)
 }
