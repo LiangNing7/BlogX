@@ -10,6 +10,7 @@ import (
 	"github.com/LiangNing7/BlogX/api/global_notification_api"
 	"github.com/LiangNing7/BlogX/api/image_api"
 	"github.com/LiangNing7/BlogX/api/log_api"
+	"github.com/LiangNing7/BlogX/api/search_api"
 	"github.com/LiangNing7/BlogX/api/site_api"
 	"github.com/LiangNing7/BlogX/api/site_msg_api"
 	"github.com/LiangNing7/BlogX/api/user_api"
@@ -28,6 +29,7 @@ type Api struct {
 	GlobalNotificationApi global_notification_api.GlobalNotificationApi
 	FocusApi              focus_api.FocusApi
 	ChatApi               chat_api.ChatApi
+	SearchApi             search_api.SearchApi
 }
 
 var App = Api{}

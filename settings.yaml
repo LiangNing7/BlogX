@@ -99,3 +99,22 @@ ai:
   secretKey: njdfnhj6344t45347gsdhgsdh
   nickname: 凉柠
   avatar: /xxx/xxx
+river:
+  enable: true
+  server_id: 1001
+  flavor: mysql
+  data_dir: ./var
+  source:
+  - schema: blogx
+    tables:
+    - article_models
+  rule:
+  - schema: blogx
+    table: article_models
+    index: article_index
+    type: _doc
+    parent: ""
+    id: []
+    field:
+      tag_list: tag_list,list
+  bulk_size: 128

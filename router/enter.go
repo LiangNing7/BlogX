@@ -26,6 +26,7 @@ func Run() {
 	GlobalNotificationRouter(nr)
 	FocusRouter(nr)
 	ChatRouter(nr)
+	SearchRouter(nr)
 	addr := global.Config.System.Addr()
 	r.Run(addr)
 }
