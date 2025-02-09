@@ -33,6 +33,8 @@ es:
   url: http://127.0.0.1:9200
   username:
   password:
+  is_https: false
+  enable: true
 upload:
   size: 3
   whiteList:
