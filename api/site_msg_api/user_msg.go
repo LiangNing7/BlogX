@@ -1,6 +1,7 @@
 package site_msg_api
 
 import (
+	"github.com/LiangNing7/BlogX/common"
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/models"
@@ -31,7 +32,23 @@ func (SiteMsgApi) UserMsgView(c *gin.Context) {
 			data.SystemMsgCount++
 		}
 	}
-	// TODO: 算未读的私信总数
+	var chatList []models.ChatModel
+	// 接收人是我，而且这个消息未读
+	global.DB.Find(&chatList, "rev_user_id = ?", claims.UserID)
+	var chatIDList []uint
+	for _, model := range chatList {
+		chatIDList = append(chatIDList, model.ID)
+	}
+	chatAcMap := common.ScanMapV2(models.UserChatActionModel{}, common.ScanOption{
+		Where: global.DB.Where("chat_id in ?", chatIDList),
+	})
+	for _, model := range chatList {
+		_, ok := chatAcMap[model.ID]
+		if !ok {
+			data.PrivateMsgCount++
+			continue
+		}
+	}
 	// 过滤掉删除的，只取未读的
 	var userReadMsgIDList []uint
 	global.DB.Model(models.UserGlobalNotificationModel{}).
