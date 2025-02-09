@@ -12,6 +12,7 @@ type ModelMap interface {
 }
 type ScanOption struct {
 	Where *gorm.DB
+	Key   string
 }
 
 func ScanMap[T ModelMap](model T, option ScanOption) (mp map[uint]T) {
@@ -35,9 +36,13 @@ func ScanMapV2[T any](model T, option ScanOption) (mp map[uint]T) {
 	}
 	query.Find(&list)
 	mp = map[uint]T{}
+	key := "ID"
+	if option.Key != "" {
+		key = option.Key
+	}
 	for _, m := range list {
 		v := reflect.ValueOf(m)
-		idField := v.FieldByName("ID")
+		idField := v.FieldByName(key)
 		uid, ok := idField.Interface().(uint)
 		if !ok {
 			continue

@@ -14,4 +14,9 @@ func main() {
 	global.DB = core.InitDB()
 	// chat_service.ToImageChat(2, 1, "http://sqa480fov.sabkt.gdipper.com/blogx/jk雷神.jpg")
 	chat_service.ToTextChat(1, 2, "你好呀!")
+	chat_service.ToTextChat(2, 1, "Hello!")
+	chat_service.ToTextChat(1, 2, "你好呀!!")
+	chat_service.ToTextChat(2, 1, "Hello!!")
+	chat_service.ToTextChat(1, 2, "你好呀!!")
+	chat_service.ToTextChat(2, 1, "Hello!!")
 }
