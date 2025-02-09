@@ -24,6 +24,10 @@ type UserModel struct {
 	Addr           string                  `json:"addr"`
 }
 
+func (u *UserModel) GetID() uint {
+	return u.ID
+}
+
 func (u *UserModel) AfterCreate(tx *gorm.DB) error {
 	err := tx.Create(&UserConfModel{UserID: u.ID, OpenCollect: true, OpenFollow: true, OpenFans: true, HomeStyleID: 1}).Error
 	err = tx.Create(&UserMessageConfModel{UserID: u.ID, OpenCommentMessage: true, OpenDiggMessage: true, OpenPrivateChat: true}).Error
