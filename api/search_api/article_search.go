@@ -60,6 +60,16 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 	lookMap := redis_article.GetAllCacheLook()
 	commentMap := redis_article.GetAllCacheComment()
 
+	// 未登录的用户，只能看前两页
+	claims, err := jwts.ParseTokenByGin(c)
+	if err != nil && claims == nil {
+		// 未登录的用户
+		if cr.Page > 2 || cr.Limit > 10 {
+			res.FailWithMsg("查询更多，请登录", c)
+			return
+		}
+	}
+
 	if global.ESClient == nil {
 		// 服务降级，用户可能没有配置es
 		where := global.DB.Where("")
