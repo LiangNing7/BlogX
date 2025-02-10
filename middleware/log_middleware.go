@@ -26,6 +26,11 @@ func LogMiddleware(c *gin.Context) {
 	log.SetRequest(c)
 
 	c.Set("log", log)
+	if c.Request.URL.Path == "/api/ai/article" {
+		c.Next()
+		log.MiddlewareSave()
+		return
+	}
 	res := &ResponseWriter{
 		ResponseWriter: c.Writer,
 		Head:           make(http.Header),
