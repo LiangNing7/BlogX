@@ -19,6 +19,7 @@
         const content = document.getElementById("ipt").value
         const url = `http://122.51.133.212:8080/api/ai/article?content=${content}&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXJuYW1lIjoiTGlhbmdOaW5nIiwicm9sZSI6MSwiZXhwIjoxNzM5ODgyMTMzLCJpc3MiOiJsaWFuZ25pbmcifQ.9jQEySGkX2DQgHXhnyNaOtYmYeTjzCGpLD5qx40NnoI`
         const eventSource=new EventSource(url);
+        inner.innerText = ""
         eventSource.onmessage = (e) => {
             const message = JSON.parse(e.data);
             //this.messages.push(message);
