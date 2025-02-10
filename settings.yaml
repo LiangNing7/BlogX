@@ -101,6 +101,7 @@ ai:
   secretKey: njdfnhj6344t45347gsdhgsdh
   nickname: 凉柠
   avatar: /xxx/xxx
+  abstract: Hello，我是你的AI小管家,你可以叫我凉柠,我可以根据你的描述在全站文章中去找到你所喜欢的文章,赶紧来试试吧！
 river:
   enable: true
   server_id: 1001
