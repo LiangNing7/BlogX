@@ -13,7 +13,7 @@ func Run() {
 	// 配置静态文件路径
 	r.Static("/uploads", "uploads")
 	nr := r.Group("/api")
-	nr.Use(middleware.LogMiddleware)
+	nr.Use(middleware.LogMiddleware).Use(middleware.Cors())
 	SiteRouter(nr)
 	LogRouter(nr)
 	ImageRouter(nr)

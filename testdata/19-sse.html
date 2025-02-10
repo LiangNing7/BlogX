@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>sse</title>
+</head>
+<body>
+<input id="ipt" placeholder="请输入对话内容">
+<button id="btn">对话</button>
+<div id="inner">
+</div>
+<script>
+    const inner = document.getElementById("inner")
+    document.getElementById("btn").onclick=function (){
+        if(!window.EventSource){
+            alert("你的浏览器不支持SSE~")
+            return
+        }
+        const content = document.getElementById("ipt").value
+        const url = `http://122.51.133.212:8080/api/ai/article?content=${content}&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXJuYW1lIjoiTGlhbmdOaW5nIiwicm9sZSI6MSwiZXhwIjoxNzM5ODgyMTMzLCJpc3MiOiJsaWFuZ25pbmcifQ.9jQEySGkX2DQgHXhnyNaOtYmYeTjzCGpLD5qx40NnoI`
+        const eventSource=new EventSource(url);
+        eventSource.onmessage = (e) => {
+            const message = JSON.parse(e.data);
+            //this.messages.push(message);
+            inner.innerText += message.data
+            console.log("已接受到消息:",  message)
+        };
+        eventSource.onerror = (e) => {
+            console.log(e)
+            eventSource.close()
+            return
+        };
+        //处理服务器响应报文中的自定义事件
+        eventSource.addEventListener("close", function (e) {
+            console.log(e)
+        });
+    }
+</script>
+</body>
+</html>
+
