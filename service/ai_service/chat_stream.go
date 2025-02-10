@@ -28,14 +28,14 @@ type StreamData struct {
 //go:embed chat_stream.prompt
 var chatStreamPrompt string
 
-func ChatStream(content string) (msgChan chan string, err error) {
+func ChatStream(content string, params string) (msgChan chan string, err error) {
 	msgChan = make(chan string)
 	r := Request{
 		Model: "deepseek-chat",
 		Messages: []Message{
 			{
 				Role:    "system",
-				Content: chatStreamPrompt + "\n",
+				Content: chatStreamPrompt + params,
 			},
 			{
 				Role:    "user",
