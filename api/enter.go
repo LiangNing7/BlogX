@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/LiangNing7/BlogX/api/ai_api"
 	"github.com/LiangNing7/BlogX/api/article_api"
 	"github.com/LiangNing7/BlogX/api/banner_api"
 	"github.com/LiangNing7/BlogX/api/captcha_api"
@@ -30,6 +31,7 @@ type Api struct {
 	FocusApi              focus_api.FocusApi
 	ChatApi               chat_api.ChatApi
 	SearchApi             search_api.SearchApi
+	AiApi                 ai_api.AiApi
 }
 
 var App = Api{}
