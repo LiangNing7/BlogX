@@ -101,7 +101,7 @@ func GetAllCacheComment() (mps map[uint]int) {
 }
 
 func Clear() {
-	err := global.Redis.Del("article_look_key", "article_digg_key", "article_collect_key").Err()
+	err := global.Redis.Del("article_look_key", "article_digg_key", "article_collect_key", "article_comment_key").Err()
 	if err != nil {
 		logrus.Error(err)
 	}

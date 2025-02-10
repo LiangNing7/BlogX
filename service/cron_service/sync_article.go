@@ -22,7 +22,7 @@ func SyncArticle() {
 		digg := diggMap[model.ID]
 		look := lookMap[model.ID]
 		comment := commentMap[model.ID]
-		if collect == 0 || digg == 0 || look == 0 || comment == 0 {
+		if collect == 0 && digg == 0 && look == 0 && comment == 0 {
 			continue
 		}
 

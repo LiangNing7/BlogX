@@ -11,6 +11,7 @@ import (
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/LiangNing7/BlogX/utils/sql"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,6 @@ type ArticleListResponse struct {
 
 func (SearchApi) ArticleSearchView(c *gin.Context) {
 	var cr = middleware.GetBind[ArticleSearchRequest](c)
-
 	var sortMap = map[int8]string{
 		0: "_score",
 		1: "created_at",
@@ -55,6 +55,10 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 	}
 
 	topArticleIDList := getAdminTopArticleIDList()
+	collectMap := redis_article.GetAllCacheCollect()
+	diggMap := redis_article.GetAllCacheDigg()
+	lookMap := redis_article.GetAllCacheLook()
+	commentMap := redis_article.GetAllCacheComment()
 
 	if global.ESClient == nil {
 		// 服务降级，用户可能没有配置es
@@ -84,7 +88,13 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 		})
 
 		var list = make([]ArticleListResponse, 0)
+
 		for _, model := range _list {
+			model.Content = ""
+			model.DiggCount = model.DiggCount + diggMap[model.ID]
+			model.CollectCount = model.CollectCount + collectMap[model.ID]
+			model.LookCount = model.LookCount + lookMap[model.ID]
+			model.CommentCount = model.CommentCount + commentMap[model.ID]
 			item := ArticleListResponse{
 				ArticleModel: model,
 				AdminTop:     articleTopMap[model.ID],
@@ -102,6 +112,7 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 	}
 
 	query := elastic.NewBoolQuery()
+
 	if cr.Key != "" {
 		query.Should(
 			elastic.NewMatchQuery("title", cr.Key),
@@ -109,6 +120,7 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 			elastic.NewMatchQuery("content", cr.Key),
 		)
 	}
+
 	if cr.Tag != "" {
 		query.Must(
 			elastic.NewTermQuery("tag_list", cr.Tag),
@@ -212,6 +224,11 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 
 	var list = make([]ArticleListResponse, 0)
 	for _, model := range _list {
+		model.Content = ""
+		model.DiggCount = model.DiggCount + diggMap[model.ID]
+		model.CollectCount = model.CollectCount + collectMap[model.ID]
+		model.LookCount = model.LookCount + lookMap[model.ID]
+		model.CommentCount = model.CommentCount + commentMap[model.ID]
 		item := ArticleListResponse{
 			ArticleModel: model,
 			AdminTop:     articleTopMap[model.ID],
