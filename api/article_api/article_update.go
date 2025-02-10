@@ -89,6 +89,11 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 		mps["status"] = enum.ArticleStatusExamine
 	}
 
+	// 判断文章标题和正文有没有变化
+	if cr.Title != article.Title || cr.Content != article.Content {
+		// 重新构建全文记录
+	}
+
 	err = global.DB.Model(&article).Updates(mps).Error
 	if err != nil {
 		res.FailWithMsg("更新失败", c)
