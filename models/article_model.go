@@ -72,6 +72,9 @@ func (a *ArticleModel) AfterCreate(tx *gorm.DB) (err error) {
 	}
 	textList := text_service.MdContentTransformation(a.ID, a.Title, a.Content)
 	var list []TextModel
+	if len(textList) == 0 {
+		return nil
+	}
 	for _, model := range textList {
 		list = append(list, TextModel{
 			ArticleID: model.ArticleID,

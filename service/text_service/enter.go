@@ -37,6 +37,11 @@ func MdContentTransformation(id uint, title string, content string) (list []Text
 		bodyList = append(bodyList, getBody(body))
 	}
 
+	// 可能只有标题的情况
+	if len(headList) > len(bodyList) {
+		bodyList = append(bodyList, "")
+	}
+
 	if len(headList) != len(bodyList) {
 		fmt.Println("headList与bodyList 不一致")
 		fmt.Printf("%q  %d\n", headList, len(headList))
