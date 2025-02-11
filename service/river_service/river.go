@@ -87,6 +87,7 @@ func (r *River) newCanal() error {
 	cfg.Password = db.Password
 	cfg.Charset = "utf8mb4"
 	cfg.Flavor = global.Config.River.Flavor
+	cfg.Dump.ExecutionPath = ""
 
 	cfg.ServerID = global.Config.River.ServerID
 
