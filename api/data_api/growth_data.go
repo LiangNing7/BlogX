@@ -33,6 +33,12 @@ func (DataApi) GrowthDataView(c *gin.Context) {
 	var dataList []Table
 	switch cr.Type {
 	case 1:
+		global.DB.Model(models.SiteFlowModel{}).Where("created_at >= ? and created_at <= ?",
+			before7.Format("2006-01-02")+" 00:00:00",
+			now.Format("2006-01-02 15:04:05"),
+		).
+			Select("date(created_at) as date", "sum(count) as count").
+			Group("date").Scan(&dataList)
 	case 2:
 		global.DB.Model(models.ArticleModel{}).Where("created_at >= ? and created_at <= ? and status = ?",
 			before7.Format("2006-01-02")+" 00:00:00",
