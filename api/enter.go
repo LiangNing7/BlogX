@@ -7,6 +7,7 @@ import (
 	"github.com/LiangNing7/BlogX/api/captcha_api"
 	"github.com/LiangNing7/BlogX/api/chat_api"
 	"github.com/LiangNing7/BlogX/api/comment_api"
+	"github.com/LiangNing7/BlogX/api/data_api"
 	"github.com/LiangNing7/BlogX/api/focus_api"
 	"github.com/LiangNing7/BlogX/api/global_notification_api"
 	"github.com/LiangNing7/BlogX/api/image_api"
@@ -32,6 +33,7 @@ type Api struct {
 	ChatApi               chat_api.ChatApi
 	SearchApi             search_api.SearchApi
 	AiApi                 ai_api.AiApi
+	DataApi               data_api.DataApi
 }
 
 var App = Api{}

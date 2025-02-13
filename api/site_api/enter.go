@@ -9,6 +9,7 @@ import (
 	"github.com/LiangNing7/BlogX/core"
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/middleware"
+	"github.com/LiangNing7/BlogX/service/redis_service/redis_site"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -40,6 +41,7 @@ func (SiteApi) SiteInfoView(c *gin.Context) {
 
 	if cr.Name == "site" {
 		global.Config.Site.About.Version = global.Version
+		redis_site.SetFlow()
 		res.OkWithData(SiteInfoResponse{
 			Site: global.Config.Site,
 			QiNiu: QiNiu{
