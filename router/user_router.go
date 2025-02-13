@@ -22,4 +22,5 @@ func UserRouter(r *gin.RouterGroup) {
 	r.PUT("user/email/bind", middleware.EmailVerifyMiddleware, middleware.AuthMiddleware, app.BindEmailView)
 	r.PUT("user", middleware.AuthMiddleware, app.UserInfoUpdateView)
 	r.PUT("user/admin", middleware.AdminMiddleware, app.AdminUserInfoUpdateView)
+	r.POST("user/article/top", middleware.AuthMiddleware, middleware.BindJsonMiddleware[user_api.UserArticleTopRequest], app.UserArticleTopView)
 }
