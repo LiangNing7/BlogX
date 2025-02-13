@@ -73,6 +73,8 @@ services:
     networks:
       blogx_network:
         ipv4_address: 10.2.0.7
+    environment:
+      TZ: Asia/Shanghai
     depends_on:
       - mysql-master
       - es

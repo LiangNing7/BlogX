@@ -13,9 +13,10 @@ import (
 
 type ArticleDetailResponse struct {
 	models.ArticleModel
-	Username   string `json:"username"`
-	Nickname   string `json:"nickname"`
-	UserAvatar string `json:"userAvatar"`
+	Username      string  `json:"username"`
+	Nickname      string  `json:"nickname"`
+	UserAvatar    string  `json:"userAvatar"`
+	CategoryTitle *string `json:"categoryTitle"`
 }
 
 func (ArticleApi) ArticleDetailView(c *gin.Context) {
@@ -24,7 +25,7 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 	// 登录用户，能看到自己的所有文章
 	// 管理员，能看到全部的文章
 	var article models.ArticleModel
-	err := global.DB.Preload("UserModel").Take(&article, cr.ID).Error
+	err := global.DB.Preload("UserModel").Preload("CategoryModel").Take(&article, cr.ID).Error
 	if err != nil {
 		res.FailWithMsg("文章不存在", c)
 		return
@@ -57,10 +58,14 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 	article.LookCount = article.LookCount + lookCount
 	article.CommentCount = article.CommentCount + commentCount
 
-	res.OkWithData(ArticleDetailResponse{
+	data := ArticleDetailResponse{
 		ArticleModel: article,
 		Username:     article.UserModel.Username,
 		Nickname:     article.UserModel.Nickname,
 		UserAvatar:   article.UserModel.Avatar,
-	}, c)
+	}
+	if article.CategoryModel != nil {
+		data.CategoryTitle = &article.CategoryModel.Title
+	}
+	res.OkWithData(data, c)
 }
