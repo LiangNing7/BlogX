@@ -9,4 +9,5 @@ import (
 func DataRouter(r *gin.RouterGroup) {
 	app := api.App.DataApi
 	r.GET("data/sum", middleware.AdminMiddleware, app.SumView)
+	r.GET("data/article", middleware.AdminMiddleware, app.ArticleDataView)
 }
