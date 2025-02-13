@@ -1,0 +1,126 @@
+system:
+  ip: ""
+  port: 8080
+  env: dev
+  gin_mode: debug
+log:
+  app: blogx_server
+  dir: logs
+db:
+  - user: root
+    password: "" # privacy
+    host: 10.2.0.2
+    port: 3306
+    db: blogx
+    debug: false
+    source: mysql
+  - user: root
+    password: "" # privacy
+    host: 10.2.0.3
+    port: 3307
+    db: blogx
+    debug: false
+    source: mysql
+redis:
+  addr: 10.2.0.6:6379
+  password: ""
+  db: 2
+es:
+  addr: 10.2.0.5:9200
+  is_https: false
+  username:
+  password:
+  enable: true
+river:
+  enable: true
+  server_id: 1001
+  flavor: mysql
+  data_dir: ./var
+  source:
+    - schema: blogx
+      tables:
+        - article_models
+        - text_models
+  rule:
+    - schema: blogx
+      table: article_models
+      index: article_index
+      type: _doc
+      field:
+        tag_list: tag_list,list
+    - schema: blogx
+      table: text_models
+      index: text_index
+      type: _doc
+  bulk_size: 128
+jwt:
+  expire: 3
+  secret: "" # privacy
+  issuer: liangning
+site:
+  siteInfo:
+    title: 凉柠博客
+    logo: ""
+    beian: ""
+    mode: 1
+  project:
+    title: "LiangNing Blog"
+    icon: "/yyy.png"
+    webPath: "uploads/index.html"
+  seo:
+    keywords: "LiangNing Blog"
+    description: "凉柠博客"
+  about:
+    siteDate: ""
+    qq: ""
+    wechat: ""
+    gitee: ""
+    bilibili: ""
+    github: ""
+  login:
+    qqLogin: false
+    usernamePwdLogin: true
+    emailLogin: true
+    captcha: true
+  indexRight:
+    list: []
+  article:
+    noExamine: true
+    commentLine: 3
+email:
+  domain: smtp.qq.com
+  port: 587
+  sendEmail: # privacy
+  authCode:  # privacy
+  sendNickname: LiangNing
+  ssl: true
+  tls: false
+qq:
+  appID: "" # privacy
+  appKey: "" # privacy
+  redirect: http://xxxxx
+qiNiu:
+  enable: true
+  accessKey: # privacy
+  secretKey: # privacy
+  bucket: liangningblog
+  uri: http://sqa480fov.sabkt.gdipper.com
+  region: as0
+  prefix: blogx
+  size: 3
+  expire: 60
+ai:
+  enable: true
+  secretKey: # privacy
+  nickname: 凉柠
+  avatar: /xxx/xxx
+  abstract: "Hello，我是你的AI小管家,你可以叫我凉柠,我可以根据你的描述在全站文章中去找到你所喜欢的文章,赶紧来试试吧！"
+upload:
+  size: 3
+  whiteList:
+    - jpg
+    - jpeg
+    - png
+    - webp
+    - gif
+  uploadDir: images001

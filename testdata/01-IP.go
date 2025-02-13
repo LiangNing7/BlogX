@@ -12,7 +12,7 @@ func main() {
 	fmt.Println(core.GetIpAddr("27.20.195.90"))
 	fmt.Println(core.GetIpAddr("223.104.194.176"))
 	fmt.Println(core.GetIpAddr("59.125.68.207"))
-	fmt.Println(core.GetIpAddr("115.54.61.158"))
+	fmt.Println(core.GetIpAddr("58.218.202.132"))
 	fmt.Println(core.GetIpAddr("113.200.174.40"))
 	fmt.Println(core.GetIpAddr("210.0.158.253"))
 	fmt.Println(core.GetIpAddr("113.90.151.170"))

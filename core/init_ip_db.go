@@ -1,6 +1,7 @@
 package core
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
@@ -11,9 +12,11 @@ import (
 
 var searcher *xdb.Searcher
 
+//go:embed ip2region.xdb
+var addrDB []byte
+
 func InitIPDB() {
-	var dbPath = "init/ip2region.xdb"
-	_searcher, err := xdb.NewWithFileOnly(dbPath)
+	_searcher, err := xdb.NewWithBuffer(addrDB)
 	if err != nil {
 		logrus.Fatalf("ip地址数据库加载失败 %s", err)
 		return

@@ -7,6 +7,8 @@ services:
     privileged: true
     environment:
       MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Shanghai
+      MYSQL_DATABASE: blogx
     command:
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
@@ -14,13 +16,12 @@ services:
       --explicit_defaults_for_timestamp=true
       --lower_case_table_names=1
       --max_allowed_packet=128M;
-    ports:
-      - "3306:3306"
     volumes:
       - ./master/my.cnf:/etc/mysql/my.cnf
       - ./master/mysql-files:/var/lib/mysql-files
       - ./master/data:/var/lib/mysql
       - ./master/log:/var/log/
+      - ./master/db.sql:/docker-entrypoint-initdb.d/db.sql
     networks:
       blogx_network:
         ipv4_address: 10.2.0.2
@@ -31,6 +32,8 @@ services:
     privileged: true
     environment:
       MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Shanghai
+      MYSQL_DATABASE: blogx
     command:
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
@@ -38,8 +41,6 @@ services:
       --explicit_defaults_for_timestamp=true
       --lower_case_table_names=1
       --max_allowed_packet=128M;
-    ports:
-      - "3307:3306"
     volumes:
       - ./slave/my.cnf:/etc/mysql/my.cnf
       - ./slave/mysql-files:/var/lib/mysql-files
@@ -55,13 +56,46 @@ services:
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-    ports:
-      - 9200:9200
     volumes:
       - ./es/data:/usr/share/elasticsearch/data
     networks:
       blogx_network:
-        ipv4_address: 10.2.0.4
+        ipv4_address: 10.2.0.5
+  redis:
+    restart: always
+    image: redis:5.0.5
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.6
+  blogx_server:
+    restart: always
+    build: ../../
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.7
+    depends_on:
+      - mysql-master
+      - es
+      - redis
+    volumes:
+      - ./blogx_server/settings.yaml:/app/settings.yaml
+      - ./blogx_server/uploads:/app/uploads
+      - ./blogx_server/logs:/app/logs
+    command: "/app/main"
+  blogx_web:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/logs:/var/log/nginx/
+      - ./blogx_web/dist:/usr/share/nginx/fai_web
+      - ./nginx/cert/:/usr/share/nginx/cert
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.8
+    ports:
+      - "80:80"
+      - "443:443"
 networks:
   blogx_network:
     driver: bridge
