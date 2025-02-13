@@ -15,22 +15,25 @@ import (
 type GrowthDataRequest struct {
 	Type int8 `form:"type" binding:"required,oneof=1 2 3"`
 }
+
 type GrowthDataResponse struct {
 	GrowthRate int      `json:"growthRate"` // 增长率
 	GrowthNum  int      `json:"growthNum"`  // 增长数
 	CountList  []int    `json:"countList"`
 	DateList   []string `json:"dateList"`
 }
+type Table struct {
+	Date  string `gorm:"column:date"`
+	Count int    `gorm:"column:count"`
+}
 
 func (DataApi) GrowthDataView(c *gin.Context) {
 	cr := middleware.GetBind[GrowthDataRequest](c)
-	type Table struct {
-		Date  string `gorm:"column:date"`
-		Count int    `gorm:"column:count"`
-	}
+
 	now := time.Now()
 	before7 := now.AddDate(0, 0, -7)
 	var dataList []Table
+
 	switch cr.Type {
 	case 1:
 		global.DB.Model(models.SiteFlowModel{}).Where("created_at >= ? and created_at <= ?",
@@ -59,7 +62,8 @@ func (DataApi) GrowthDataView(c *gin.Context) {
 		date := strings.Split(model.Date, "T")[0]
 		dateMap[date] = model.Count
 	}
-	response := RegisterUserDataResponse{}
+
+	response := GrowthDataResponse{}
 	for i := 0; i < 7; i++ {
 		date := before7.AddDate(0, 0, i+1)
 		dateS := date.Format("2006-01-02")
