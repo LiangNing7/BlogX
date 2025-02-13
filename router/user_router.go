@@ -14,6 +14,7 @@ func UserRouter(r *gin.RouterGroup) {
 	r.POST("user/qq", app.QQLoginView)
 	r.POST("user/login", middleware.CaptchaMiddleware, middleware.BindJsonMiddleware[user_api.PwdLoginRequest], app.PwdLoginApi)
 	r.GET("user/detail", middleware.AuthMiddleware, app.UserDetailView)
+	r.GET("user", middleware.AdminMiddleware, middleware.BindQueryMiddleware[user_api.UserListRequest], app.UserListView)
 	r.GET("user/login", middleware.AuthMiddleware, app.UserLoginListView)
 	r.GET("user/base", app.UserBaseInfoView)
 	r.PUT("user/password", middleware.AuthMiddleware, app.UpdatePasswordView)

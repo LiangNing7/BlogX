@@ -22,6 +22,8 @@ type UserModel struct {
 	UserConfModel  *UserConfModel          `gorm:"foreignKey:UserID"  json:"-"`
 	IP             string                  `json:"ip"`
 	Addr           string                  `json:"addr"`
+	ArticleList    []ArticleModel          `gorm:"foreignKey:UserID" json:"-"`
+	LoginList      []UserLoginModel        `gorm:"foreignKey:UserID" json:"-"`
 }
 
 func (u *UserModel) GetID() uint {
