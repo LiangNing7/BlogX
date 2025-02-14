@@ -2,9 +2,11 @@ package models
 
 import (
 	"math"
+	"reflect"
 	"time"
 
 	"github.com/LiangNing7/BlogX/models/enum"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -34,6 +36,36 @@ func (u *UserModel) AfterCreate(tx *gorm.DB) error {
 	err := tx.Create(&UserConfModel{UserID: u.ID, OpenCollect: true, OpenFollow: true, OpenFans: true, HomeStyleID: 1}).Error
 	err = tx.Create(&UserMessageConfModel{UserID: u.ID, OpenCommentMessage: true, OpenDiggMessage: true, OpenPrivateChat: true}).Error
 	return err
+}
+
+func (u *UserModel) BeforeDelete(tx *gorm.DB) (err error) {
+	var list = []any{
+		ArticleDiggModel{},
+		ArticleModel{},
+		CategoryModel{},
+		CollectModel{},
+		CommentModel{},
+		CommentDiggModel{},
+		LogModel{},
+		UserArticleCollectModel{},
+		UserArticleLookHistoryModel{},
+		UserChatActionModel{},
+		UserFocusModel{},
+		UserGlobalNotificationModel{},
+		UserLoginModel{},
+		UserTopArticleModel{},
+	}
+	for _, model := range list {
+		count := tx.Delete(&model, "user_id = ?", u.ID).RowsAffected
+		logrus.Infof("删除 %s 成功%d条", reflect.TypeOf(model).Name(), count)
+	}
+	var chatList []ChatModel
+	tx.Find(&chatList, "send_user_id = ? or rev_user_id = ?", u.ID, u.ID).Delete(&chatList)
+	logrus.Infof("删除关联对话 %d条", len(chatList))
+	var messageList []MessageModel
+	tx.Find(&messageList, "rev_user_id = ?", u.ID).Delete(&messageList)
+	logrus.Infof("删除关联消息 %d条", len(messageList))
+	return nil
 }
 
 func (u *UserModel) CodeAge() int {
