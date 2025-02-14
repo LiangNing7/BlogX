@@ -11,6 +11,10 @@ type List []string
 func (j *List) Scan(value interface{}) error {
 	val, ok := value.([]uint8)
 	if ok {
+		if string(val) == "" {
+			*j = []string{}
+			return nil
+		}
 		*j = strings.Split(string(val), ",")
 	}
 	return nil
