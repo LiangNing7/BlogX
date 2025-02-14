@@ -2,6 +2,7 @@ package cron_service
 
 import (
 	"github.com/LiangNing7/BlogX/global"
+	"github.com/LiangNing7/BlogX/models"
 	"github.com/LiangNing7/BlogX/service/redis_service/redis_site"
 )
 

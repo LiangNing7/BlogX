@@ -20,6 +20,7 @@ type UserDetailResponse struct {
 	Abstract       string                  `json:"abstract"`
 	RegisterSource enum.RegisterSourceType `json:"registerSource"` // 注册来源
 	CodeAge        int                     `json:"codeAge"`        // 码龄
+	Role           enum.RoleType           `json:"role"`           // 角色
 	models.UserConfModel
 }
 
@@ -38,6 +39,7 @@ func (UserApi) UserDetailView(c *gin.Context) {
 		Nickname:       user.Nickname,
 		Avatar:         user.Avatar,
 		Abstract:       user.Abstract,
+		Role:           user.Role,
 		RegisterSource: user.RegisterSource,
 		CodeAge:        user.CodeAge(),
 	}
