@@ -89,7 +89,9 @@ func (SearchApi) ArticleSearchView(c *gin.Context) {
 		}
 		sort, _ := sortMap[cr.Type]
 		cr.Order = sort
-		_list, count, _ := common.ListQuery(models.ArticleModel{}, common.Options{
+		_list, count, _ := common.ListQuery(models.ArticleModel{
+			Status: 3,
+		}, common.Options{
 			Preloads:     []string{"CategoryModel", "UserModel"},
 			PageInfo:     cr.PageInfo,
 			Likes:        []string{"title", "abstract"},

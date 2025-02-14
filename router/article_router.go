@@ -36,7 +36,7 @@ func ArticleRouter(r *gin.RouterGroup) {
 	r.POST("collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.CollectCreateRequest], app.CollectCreateView)
 	r.GET("collect", middleware.BindQueryMiddleware[article_api.CollectListRequest], app.CollectListView)
 	r.DELETE("collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.CollectRemoveView)
-	r.DELETE("article/collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.ArticleCollectPatchRemoveView)
+	r.DELETE("article/collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.ArticleCollectPatchRemoveRequest], app.ArticleCollectPatchRemoveView)
 
 	r.GET("article/tag/options", middleware.AuthMiddleware, app.ArticleTagOptionsView)
 
