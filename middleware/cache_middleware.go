@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/LiangNing7/BlogX/global"
+	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -16,12 +17,15 @@ type CacheOption struct {
 	Time    time.Duration
 	Params  []string
 	NoCache func(c *gin.Context) bool
+	IsUser  bool
 }
+
 type CacheMiddlewarePrefix string
 
 const (
-	CacheBannerPrefix CacheMiddlewarePrefix = "cache_banner_"
-	CacheDataPrefix   CacheMiddlewarePrefix = "cache_data_"
+	CacheBannerPrefix        CacheMiddlewarePrefix = "cache_banner_"
+	CacheDataPrefix          CacheMiddlewarePrefix = "cache_data_"
+	CacheArticleDetailPrefix CacheMiddlewarePrefix = "cache_article_detail_"
 )
 
 func NewBannerCacheOption() CacheOption {
@@ -39,6 +43,15 @@ func NewBannerCacheOption() CacheOption {
 		},
 	}
 }
+
+func NewArticleDetailCacheOption() CacheOption {
+	return CacheOption{
+		Prefix: CacheArticleDetailPrefix,
+		Time:   time.Minute,
+		IsUser: true,
+	}
+}
+
 func NewDataCacheOption() CacheOption {
 	return CacheOption{
 		Prefix: CacheDataPrefix,
@@ -61,7 +74,17 @@ func CacheMiddleware(option CacheOption) gin.HandlerFunc {
 		for _, key := range option.Params {
 			values.Add(key, c.Query(key))
 		}
-		key := fmt.Sprintf("%s%s", option.Prefix, values.Encode())
+		var key string
+		if option.IsUser {
+			var userID uint = 0
+			claims, err := jwts.ParseTokenByGin(c)
+			if err == nil && claims != nil {
+				userID = claims.UserID
+			}
+			key = fmt.Sprintf("%s%d%s", option.Prefix, userID, values.Encode())
+		} else {
+			key = fmt.Sprintf("%s%s", option.Prefix, values.Encode())
+		}
 		// 请求部分
 		val, err := global.Redis.Get(key).Result()
 		fmt.Println(key, err)

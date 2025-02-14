@@ -14,7 +14,7 @@ func ArticleRouter(r *gin.RouterGroup) {
 	r.POST("article", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.ArticleCreateRequest], app.ArticleCreateView)
 	r.PUT("article", middleware.AuthMiddleware, middleware.BindJsonMiddleware[article_api.ArticleUpdateRequest], app.ArticleUpdateView)
 	r.GET("article", middleware.BindQueryMiddleware[article_api.ArticleListRequest], app.ArticleListView)
-	r.GET("article/:id", middleware.BindUriMiddleware[models.IDRequest], app.ArticleDetailView)
+	r.GET("article/:id", middleware.CacheMiddleware(middleware.NewArticleDetailCacheOption()), middleware.BindUriMiddleware[models.IDRequest], app.ArticleDetailView)
 
 	r.POST("article/examine", middleware.AdminMiddleware, middleware.BindJsonMiddleware[article_api.ArticleExamineRequest], app.ArticleExamineView)
 
