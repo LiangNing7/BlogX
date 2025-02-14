@@ -8,7 +8,7 @@ import (
 
 func BannerRouter(r *gin.RouterGroup) {
 	app := api.App.BannerApi
-	r.GET("banner", app.BannerListView)
+	r.GET("banner", middleware.CacheMiddleware(middleware.NewBannerCacheOption()), app.BannerListView)
 	r.POST("banner", middleware.AdminMiddleware, app.BannerCreateView)
 	r.PUT("banner/:id", middleware.AdminMiddleware, app.BannerUpdateView)
 	r.DELETE("banner", middleware.AdminMiddleware, app.BannerRemoveView)

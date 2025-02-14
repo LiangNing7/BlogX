@@ -6,6 +6,7 @@ import (
 	"github.com/LiangNing7/BlogX/common"
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
+	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/gin-gonic/gin"
 )
@@ -37,6 +38,7 @@ func (BannerApi) BannerCreateView(c *gin.Context) {
 		res.FailWithError(err, c)
 		return
 	}
+	middleware.CacheClose(middleware.CacheBannerPrefix)
 	res.OkWithMsg("添加banner成功", c)
 }
 
@@ -68,6 +70,7 @@ func (BannerApi) BannerRemoveView(c *gin.Context) {
 	global.DB.Find(&list, "id in ?", cr.IDList)
 	if len(list) > 0 {
 		global.DB.Delete(&list)
+		middleware.CacheClose(middleware.CacheBannerPrefix)
 	}
 	res.OkWithMsg(fmt.Sprintf("删除banner%d个，成功%d个", len(cr.IDList), len(list)), c)
 }
@@ -100,5 +103,6 @@ func (BannerApi) BannerUpdateView(c *gin.Context) {
 		res.FailWithError(err, c)
 		return
 	}
+	middleware.CacheClose(middleware.CacheBannerPrefix)
 	res.OkWithMsg("banner更新成功", c)
 }
