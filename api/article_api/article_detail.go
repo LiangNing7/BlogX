@@ -17,6 +17,8 @@ type ArticleDetailResponse struct {
 	Nickname      string  `json:"nickname"`
 	UserAvatar    string  `json:"userAvatar"`
 	CategoryTitle *string `json:"categoryTitle"`
+	IsDigg        bool    `json:"isDigg"`
+	IsCollect     bool    `json:"isCollect"`
 }
 
 func (ArticleApi) ArticleDetailView(c *gin.Context) {
@@ -38,14 +40,33 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 			return
 		}
 	}
-	switch claims.Role {
-	case enum.UserRole:
-		if claims.UserID != article.UserID {
-			// 登录的人看到不是自己的
-			if article.Status != enum.ArticleStatusPublished {
-				res.FailWithMsg("文章不存在", c)
-				return
+	data := ArticleDetailResponse{
+		ArticleModel: article,
+		Username:     article.UserModel.Username,
+		Nickname:     article.UserModel.Nickname,
+		UserAvatar:   article.UserModel.Avatar,
+	}
+	if err == nil && claims != nil {
+		switch claims.Role {
+		case enum.UserRole:
+			if claims.UserID != article.UserID {
+				// 登录的人看到不是自己的
+				if article.Status != enum.ArticleStatusPublished {
+					res.FailWithMsg("文章不存在", c)
+					return
+				}
 			}
+		}
+		// 查用户是否收藏了文章，点赞了文章
+		var userDiggModel models.ArticleDiggModel
+		err = global.DB.Take(&userDiggModel, "user_id = ? and article_id = ?", claims.UserID, article.ID).Error
+		if err == nil {
+			data.IsDigg = true
+		}
+		var userCollectModel models.UserArticleCollectModel
+		err = global.DB.Take(&userCollectModel, "user_id = ? and article_id = ?", claims.UserID, article.ID).Error
+		if err == nil {
+			data.IsCollect = true
 		}
 	}
 	lookCount := redis_article.GetCacheLook(article.ID)
@@ -58,12 +79,6 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 	article.LookCount = article.LookCount + lookCount
 	article.CommentCount = article.CommentCount + commentCount
 
-	data := ArticleDetailResponse{
-		ArticleModel: article,
-		Username:     article.UserModel.Username,
-		Nickname:     article.UserModel.Nickname,
-		UserAvatar:   article.UserModel.Avatar,
-	}
 	if article.CategoryModel != nil {
 		data.CategoryTitle = &article.CategoryModel.Title
 	}
