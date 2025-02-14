@@ -12,7 +12,6 @@ import (
 	"github.com/LiangNing7/BlogX/service/redis_service/redis_article"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type ArticleCollectRequest struct {
@@ -72,15 +71,11 @@ func (ArticleApi) ArticleCollectView(c *gin.Context) {
 		// 对收藏夹进行加1
 		redis_article.SetCacheCollect(cr.ArticleID, true)
 		message_service.InsertCollectArticleMessage(model)
-		global.DB.Model(&collectModel).Update("article_count", gorm.Expr("article_count + 1"))
+		// global.DB.Model(&collectModel).Update("article_count", gorm.Expr("article_count + 1"))
 		return
 	}
 	// 取消收藏
-	err = global.DB.Where(models.UserArticleCollectModel{
-		UserID:    claims.UserID,
-		ArticleID: cr.ArticleID,
-		CollectID: cr.CollectID,
-	}).Delete(&models.UserArticleCollectModel{}).Error
+	err = global.DB.Delete(&articleCollect).Error
 	if err != nil {
 		res.FailWithMsg("取消收藏失败", c)
 		return

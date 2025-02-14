@@ -74,10 +74,10 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 	collectCount := redis_article.GetCacheCollect(article.ID)
 	commentCount := redis_article.GetCacheComment(article.ID)
 
-	article.DiggCount = article.DiggCount + diggCount
-	article.CollectCount = article.CollectCount + collectCount
-	article.LookCount = article.LookCount + lookCount
-	article.CommentCount = article.CommentCount + commentCount
+	data.DiggCount = article.DiggCount + diggCount
+	data.CollectCount = article.CollectCount + collectCount
+	data.LookCount = article.LookCount + lookCount
+	data.CommentCount = article.CommentCount + commentCount
 
 	if article.CategoryModel != nil {
 		data.CategoryTitle = &article.CategoryModel.Title

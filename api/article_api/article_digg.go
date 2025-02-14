@@ -41,7 +41,7 @@ func (ArticleApi) ArticleDiggView(c *gin.Context) {
 		return
 	}
 	// 取消点赞
-	global.DB.Model(models.ArticleDiggModel{}).Delete("user_id = ? and article_id = ?", claims.UserID, article.ID)
+	global.DB.Delete(&userDiggArticle)
 	res.OkWithMsg("取消点赞成功", c)
 	redis_article.SetCacheDigg(cr.ID, false)
 	return
