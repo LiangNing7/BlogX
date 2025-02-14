@@ -68,12 +68,14 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 				res.FailWithMsg("请传入用户id", c)
 				return
 			}
+
 			var userConf models.UserConfModel
 			err := global.DB.Take(&userConf, "user_id = ?", cr.UserID).Error
 			if err != nil {
 				res.FailWithMsg("用户不存在", c)
 				return
 			}
+
 			if !userConf.OpenCollect {
 				res.FailWithMsg("用户未开启我的收藏", c)
 				return
@@ -105,17 +107,19 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 
 	var userTopMap = map[uint]bool{}
 	var adminTopMap = map[uint]bool{}
+	var userTopQuery = global.DB.Where("")
 	if cr.UserID != 0 {
-		var userTopArticleList []models.UserTopArticleModel
-		global.DB.Preload("UserModel").Order("created_at desc").Find(&userTopArticleList, "user_id = ?", cr.UserID)
+		userTopQuery.Where("user_id = ?", cr.UserID)
+	}
+	var userTopArticleList []models.UserTopArticleModel
+	global.DB.Preload("UserModel").Order("created_at desc").Where(userTopQuery).Find(&userTopArticleList)
 
-		for _, i2 := range userTopArticleList {
-			topArticleIDList = append(topArticleIDList, i2.ArticleID)
-			if i2.UserModel.Role == enum.AdminRole {
-				adminTopMap[i2.ArticleID] = true
-			}
-			userTopMap[i2.ArticleID] = true
+	for _, i2 := range userTopArticleList {
+		topArticleIDList = append(topArticleIDList, i2.ArticleID)
+		if i2.UserModel.Role == enum.AdminRole {
+			adminTopMap[i2.ArticleID] = true
 		}
+		userTopMap[i2.ArticleID] = true
 	}
 
 	var options = common.Options{
@@ -152,9 +156,11 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 			UserNickname: model.UserModel.Nickname,
 			UserAvatar:   model.UserModel.Avatar,
 		}
+
 		if model.CategoryModel != nil {
 			data.CategoryTitle = &model.CategoryModel.Title
 		}
+
 		list = append(list, data)
 	}
 	res.OkWithList(list, count, c)
