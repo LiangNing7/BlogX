@@ -1,8 +1,6 @@
 package article_api
 
 import (
-	"fmt"
-
 	"github.com/LiangNing7/BlogX/common"
 	"github.com/LiangNing7/BlogX/common/res"
 	"github.com/LiangNing7/BlogX/global"
@@ -39,8 +37,6 @@ func (ArticleApi) AuthRecommendView(c *gin.Context) {
 				userIDList = append(userIDList, u)
 			}
 		}
-		fmt.Println(m)
-		fmt.Println(userIDList)
 	}
 	var userList []models.UserModel
 	global.DB.Find(&userList, "id in ?", userIDList)
