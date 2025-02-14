@@ -22,6 +22,7 @@ type TextSearchResponse struct {
 	ArticleID uint   `json:"articleID"`
 	Head      string `json:"head"`
 	Body      string `json:"body"`
+	Flag      string `json:"flag"`
 }
 
 func (SearchApi) TextSearchView(c *gin.Context) {
@@ -38,6 +39,7 @@ func (SearchApi) TextSearchView(c *gin.Context) {
 				ArticleID: model.ArticleID,
 				Head:      model.Head,
 				Body:      model.Body,
+				Flag:      model.Head,
 			})
 		}
 		res.OkWithList(list, count, c)
@@ -76,6 +78,7 @@ func (SearchApi) TextSearchView(c *gin.Context) {
 			logrus.Warnf("解析失败 %s  %s", err, string(hit.Source))
 			continue
 		}
+		head := item.Head
 		if len(hit.Highlight["head"]) > 0 {
 			item.Head = hit.Highlight["head"][0]
 		}
@@ -86,6 +89,7 @@ func (SearchApi) TextSearchView(c *gin.Context) {
 			ArticleID: item.ArticleID,
 			Head:      item.Head,
 			Body:      item.Body,
+			Flag:      head,
 		})
 	}
 	res.OkWithList(list, int(count), c)
