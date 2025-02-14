@@ -16,11 +16,11 @@ type ArticleModel struct {
 	Title         string             `gorm:"size:32" json:"title"`
 	Abstract      string             `gorm:"size:256" json:"abstract"`
 	Content       string             `json:"content,omitempty"`
-	CategoryID    *uint              `json:"categoryID"` // 分类的id
+	CategoryID    *uint              `gorm:"index" json:"categoryID"` // 分类的id
 	CategoryModel *CategoryModel     `gorm:"foreignKey:CategoryID" json:"-"`
 	TagList       ctype.List         `gorm:"type:longtext" json:"tagList"` // 标签列表
 	Cover         string             `gorm:"size:256" json:"cover"`
-	UserID        uint               `json:"userID"`
+	UserID        uint               `gorm:"index" json:"userID"`
 	UserModel     UserModel          `gorm:"foreignKey:UserID" json:"-"`
 	LookCount     int                `json:"lookCount"`
 	DiggCount     int                `json:"diggCount"`

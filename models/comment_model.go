@@ -3,9 +3,9 @@ package models
 type CommentModel struct {
 	Model
 	Content        string          `gorm:"size:256" json:"content"`
-	UserID         uint            `json:"userID"`
+	UserID         uint            `gorm:"index" json:"userID"`
 	UserModel      UserModel       `gorm:"foreignKey:UserID" json:"-"`
-	ArticleID      uint            `json:"articleID"`
+	ArticleID      uint            `gorm:"index" json:"articleID"`
 	ArticleModel   ArticleModel    `gorm:"foreignKey:ArticleID" json:"-"`
 	ParentID       *uint           `json:"parentID"` // 父评论
 	ParentModel    *CommentModel   `gorm:"foreignKey:ParentID" json:"-"`

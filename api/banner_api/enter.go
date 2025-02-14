@@ -94,6 +94,7 @@ func (BannerApi) BannerUpdateView(c *gin.Context) {
 		"cover": cr.Cover,
 		"href":  cr.Href,
 		"show":  cr.Show,
+		"type":  cr.Type,
 	}).Error
 	if err != nil {
 		res.FailWithError(err, c)
