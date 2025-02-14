@@ -9,6 +9,8 @@ import (
 	"github.com/LiangNing7/BlogX/global"
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
+	"github.com/LiangNing7/BlogX/models/enum/relationship_enum"
+	"github.com/LiangNing7/BlogX/service/focus_service"
 	"github.com/LiangNing7/BlogX/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
@@ -62,12 +64,13 @@ type FocusUserListRequest struct {
 	FocusUserID uint `form:"focusUserID"`
 	UserID      uint `form:"userID"` // 查用户的关注
 }
-type FocusUserListResponse struct {
-	FocusUserID       uint      `json:"focusUserID"`
-	FocusUserNickname string    `json:"focusUserNickname"`
-	FocusUserAvatar   string    `json:"focusUserAvatar"`
-	FocusUserAbstract string    `json:"focusUserAbstract"`
-	CreatedAt         time.Time `json:"createdAt"`
+type UserListResponse struct {
+	UserID       uint                       `json:"userID"`
+	UserNickname string                     `json:"userNickname"`
+	UserAvatar   string                     `json:"userAvatar"`
+	UserAbstract string                     `json:"userAbstract"`
+	Relationship relationship_enum.Relation `json:"relationship"`
+	CreatedAt    time.Time                  `json:"createdAt"`
 }
 
 // FocusUserListView 我的关注和用户的关注
@@ -88,6 +91,7 @@ func (FocusApi) FocusUserListView(c *gin.Context) {
 			res.FailWithMsg("此用户未公开我的关注", c)
 			return
 		}
+
 		// 如果你没登录。我就不允许你查第二页
 		if err != nil || claims == nil {
 			if cr.Limit > 10 || cr.Page > 1 {
@@ -125,33 +129,35 @@ func (FocusApi) FocusUserListView(c *gin.Context) {
 		Preloads: []string{"FocusUserModel"},
 	})
 
-	var list = make([]FocusUserListResponse, 0)
+	var m = map[uint]relationship_enum.Relation{}
+	if err == nil && claims != nil {
+		var userIDList []uint
+		for _, i2 := range _list {
+			userIDList = append(userIDList, i2.FocusUserID)
+		}
+		m = focus_service.CalcUserPatchRelationship(claims.UserID, userIDList)
+
+	}
+
+	var list = make([]UserListResponse, 0)
 	for _, model := range _list {
-		list = append(list, FocusUserListResponse{
-			FocusUserID:       model.FocusUserID,
-			FocusUserNickname: model.FocusUserModel.Nickname,
-			FocusUserAvatar:   model.FocusUserModel.Avatar,
-			FocusUserAbstract: model.FocusUserModel.Abstract,
-			CreatedAt:         model.CreatedAt,
+		list = append(list, UserListResponse{
+			UserID:       model.FocusUserID,
+			UserNickname: model.FocusUserModel.Nickname,
+			UserAvatar:   model.FocusUserModel.Avatar,
+			UserAbstract: model.FocusUserModel.Abstract,
+			Relationship: m[model.FocusUserID],
+			CreatedAt:    model.CreatedAt,
 		})
 	}
 
 	res.OkWithList(list, count, c)
 }
 
-type FansUserListResponse struct {
-	FansUserID       uint      `json:"fansUserID"`
-	FansUserNickname string    `json:"fansUserNickname"`
-	FansUserAvatar   string    `json:"fansUserAvatar"`
-	FansUserAbstract string    `json:"fansUserAbstract"`
-	CreatedAt        time.Time `json:"createdAt"`
-}
-
 // FansUserListView 我的粉丝和用户的粉丝
 func (FocusApi) FansUserListView(c *gin.Context) {
 	cr := middleware.GetBind[FocusUserListRequest](c)
 	claims, err := jwts.ParseTokenByGin(c)
-
 	if cr.UserID != 0 {
 		// 传了用户id，我就查这个人的粉丝列表
 		var userConf models.UserConfModel
@@ -171,7 +177,6 @@ func (FocusApi) FansUserListView(c *gin.Context) {
 				return
 			}
 		}
-
 	} else {
 		if err != nil || claims == nil {
 			res.FailWithMsg("请登录", c)
@@ -179,6 +184,7 @@ func (FocusApi) FansUserListView(c *gin.Context) {
 		}
 		cr.UserID = claims.UserID
 	}
+
 	query := global.DB.Where("")
 	if cr.Key != "" {
 		// 模糊匹配用户
@@ -199,22 +205,34 @@ func (FocusApi) FansUserListView(c *gin.Context) {
 		Where:    query,
 		Preloads: []string{"UserModel"},
 	})
-	var list = make([]FansUserListResponse, 0)
+	var m = map[uint]relationship_enum.Relation{}
+	if err == nil && claims != nil {
+		var userIDList []uint
+		for _, i2 := range _list {
+			userIDList = append(userIDList, i2.UserID)
+		}
+		m = focus_service.CalcUserPatchRelationship(claims.UserID, userIDList)
+	}
+
+	var list = make([]UserListResponse, 0)
 	for _, model := range _list {
-		list = append(list, FansUserListResponse{
-			FansUserID:       model.UserID,
-			FansUserNickname: model.UserModel.Nickname,
-			FansUserAvatar:   model.UserModel.Avatar,
-			FansUserAbstract: model.UserModel.Abstract,
-			CreatedAt:        model.CreatedAt,
+		list = append(list, UserListResponse{
+			UserID:       model.UserID,
+			UserNickname: model.UserModel.Nickname,
+			UserAvatar:   model.UserModel.Avatar,
+			UserAbstract: model.UserModel.Abstract,
+			CreatedAt:    model.CreatedAt,
+			Relationship: m[model.UserID],
 		})
 	}
+
 	res.OkWithList(list, count, c)
 }
 
 // UnFocusUserView 登录人取关用户
 func (FocusApi) UnFocusUserView(c *gin.Context) {
 	cr := middleware.GetBind[FocusUserRequest](c)
+
 	claims := jwts.GetClaims(c)
 	if cr.FocusUserID == claims.UserID {
 		res.FailWithMsg("你无法取关自己", c)
@@ -227,6 +245,7 @@ func (FocusApi) UnFocusUserView(c *gin.Context) {
 		res.FailWithMsg("取关用户不存在", c)
 		return
 	}
+
 	// 查之前是否已经关注过他了
 	var focus models.UserFocusModel
 	err = global.DB.Take(&focus, "user_id = ? and focus_user_id = ?", claims.UserID, user.ID).Error
