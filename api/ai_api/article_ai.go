@@ -52,7 +52,7 @@ func (AiApi) ArticleAiView(c *gin.Context) {
 			Search(models.ArticleModel{}.Index()).
 			Query(query).
 			From(1).
-			Size(10).
+			Size(1).
 			Do(context.Background())
 		if err != nil {
 			source, _ := query.Source()

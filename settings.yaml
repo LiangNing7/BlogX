@@ -33,8 +33,6 @@ es:
   url: http://127.0.0.1:9200
   username:
   password:
-  is_https: false
-  enable: true
 upload:
   size: 3
   whiteList:
@@ -70,7 +68,19 @@ site:
     emailLogin: true
     captcha: true
   indexRight:
-    list: []
+    list:
+      - title: 独家推广
+        enable: true
+      - title: 用户反馈
+        enable: true
+      - title: 标签云
+        enable: true
+      - title: 文章推荐
+        enable: true
+      - title: 关于我们
+        enable: true
+      - title: 作者推荐
+        enable: true
   article:
     noExamine: true
     commentLine: 2
@@ -88,8 +98,8 @@ qq:
   redirect: http://xxxxx
 qiNiu:
   enable: true
-  accessKey: xsjtIqP8FGl1ylOEj5BqnvOdRMc6nrL4jIl0DK5D
-  secretKey: 
+  accessKey:
+  secretKey:
   bucket: liangningblog
   uri: http://sqa480fov.sabkt.gdipper.com
   region: as0
@@ -98,26 +108,6 @@ qiNiu:
   expire: 60
 ai:
   enable: false
-  secretKey: njdfnhj6344t45347gsdhgsdh
+  secretKey:
   nickname: 凉柠
   avatar: /xxx/xxx
-  abstract: Hello，我是你的AI小管家,你可以叫我凉柠,我可以根据你的描述在全站文章中去找到你所喜欢的文章,赶紧来试试吧！
-river:
-  enable: true
-  server_id: 1001
-  flavor: mysql
-  data_dir: ./var
-  source:
-  - schema: blogx
-    tables:
-    - article_models
-  rule:
-  - schema: blogx
-    table: article_models
-    index: article_index
-    type: _doc
-    parent: ""
-    id: []
-    field:
-      tag_list: tag_list,list
-  bulk_size: 128
