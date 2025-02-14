@@ -41,7 +41,7 @@ func (CommentApi) CommentDiggView(c *gin.Context) {
 		return
 	}
 	// 取消点赞
-	global.DB.Model(models.CommentDiggModel{}).Delete("user_id = ? and comment_id = ?", claims.UserID, comment.ID)
+	global.DB.Delete(&userDiggComment)
 	res.OkWithMsg("取消点赞成功", c)
 	redis_comment.SetCacheDigg(cr.ID, -1)
 	return
