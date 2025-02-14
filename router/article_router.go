@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/LiangNing7/BlogX/api"
 	"github.com/LiangNing7/BlogX/api/article_api"
+	"github.com/LiangNing7/BlogX/common"
 	"github.com/LiangNing7/BlogX/middleware"
 	"github.com/LiangNing7/BlogX/models"
 	"github.com/gin-gonic/gin"
@@ -38,4 +39,6 @@ func ArticleRouter(r *gin.RouterGroup) {
 	r.DELETE("article/collect", middleware.AuthMiddleware, middleware.BindJsonMiddleware[models.RemoveRequest], app.ArticleCollectPatchRemoveView)
 
 	r.GET("article/tag/options", middleware.AuthMiddleware, app.ArticleTagOptionsView)
+
+	r.GET("article/auth_recommend", middleware.BindQueryMiddleware[common.PageInfo], app.AuthRecommendView)
 }
